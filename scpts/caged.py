@@ -1,4 +1,5 @@
 import sys
+
 sys.path.insert(0, "../")
 
 import time
@@ -94,13 +95,31 @@ def extract_file(path_month, filename, save_rows=10):
         filename_txt = [file for file in os.listdir(path_month) if ".txt" in file][0][
             :-4
         ]
+        try:
 
-        df = pd.read_csv(
-            f"{path_month}{filename_txt}.txt",
-            sep=";",
-            encoding="latin-1",
-            nrows=save_rows,
-        )
+            df = pd.read_csv(
+                f"{path_month}{filename_txt}.txt",
+                sep=";",
+                encoding="latin-1",
+                nrows=save_rows,
+            )
+        except:
+            ## caso de erro de bad lines por conter um ; extra no arquivo txt
+            with open(
+                f"{path_month}{filename_txt}.txt",
+                encoding="latin-1",
+            ) as f:
+                newText = f.read().replace(";99;", ";99")
+
+            with open(f"{path_month}{filename_txt}.txt", "w") as f:
+                f.write(newText)
+
+            df = pd.read_csv(
+                f"{path_month}{filename_txt}.txt",
+                sep=";",
+                encoding="latin-1",
+                nrows=save_rows,
+            )
 
         df.columns = manipulation.normalize_cols(df.columns)
 
@@ -116,6 +135,53 @@ def padroniza_caged(df, municipios):
 
     for col in create_cols:
         df[col] = np.nan
+
+    hard_coded_cols = [
+        "admitidos_desligados",
+        "competencia_declarada",
+        "municipio",
+        "ano_declarado",
+        "cbo_2002_ocupacao",
+        "cnae_10_classe",
+        "cnae_20_classe",
+        "cnae_20_subclas",
+        "faixa_empr_inicio_jan",
+        "grau_instrucao",
+        "qtd_hora_contrat",
+        "ibge_subsetor",
+        "idade",
+        "ind_aprendiz",
+        "ind_portador_defic",
+        "raca_cor",
+        "salario_mensal",
+        "saldo_mov",
+        "sexo",
+        "tempo_emprego",
+        "tipo_estab",
+        "tipo_defic",
+        "tipo_mov_desagregado",
+        "uf",
+        "bairros_sp",
+        "bairros_fortaleza",
+        "bairros_rj",
+        "distritos_sp",
+        "regioes_adm_df",
+        "mesorregiao",
+        "microrregiao",
+        "regiao_adm_rj",
+        "regiao_adm_sp",
+        "regiao_corede",
+        "regiao_corede_04",
+        "regiao_gov_sp",
+        "regiao_senac_pr",
+        "regiao_senai_pr",
+        "regiao_senai_sp",
+        "subregiao_senai_pr",
+        "ind_trab_parcial",
+        "ind_trab_intermitente",
+    ]
+
+    df.columns = hard_coded_cols
 
     ## cria coluna ano e mes apartir da competencia declarada
     df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
@@ -149,8 +215,12 @@ def padroniza_caged(df, municipios):
 
     for col in objct_cols:
         if col == "salario_mensal" or col == "tempo_emprego":
-            df[col] = df[col].str.replace(",", ".").astype(float)
+            df[col] = pd.to_numeric(
+                df[col].str.replace(",", "."), downcast="float", errors="coerce"
+            )
         else:
             df[col] = np.where(df[col].str.contains("{ñ"), np.nan, df[col])
+
+    df = df[df["sigla_uf"].notnull()]
 
     return df
