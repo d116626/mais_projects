@@ -63,7 +63,7 @@ def get_file_names_and_clean_residues(path_month):
         os.remove(f"{path_month}{filename_txt[0][:-4] }.txt")
     if filename_csv != []:
         os.remove(f"{path_month}{filename_csv[0][:-4]}.csv")
-
+    # print(path_month)
     return filename_7z
 
 
@@ -128,65 +128,71 @@ def extract_file(path_month, filename, save_rows=10):
         os.remove(f"{path_month}{filename_txt}.txt")
 
 
-def padroniza_caged(df, municipios):
-    ## cria colunas que nao existem em outros arquivos
-    check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
-    create_cols = [col for col in check_cols if col not in df.columns.tolist()]
-
-    for col in create_cols:
-        df[col] = np.nan
-
-    hard_coded_cols = [
-        "admitidos_desligados",
-        "competencia_declarada",
-        "municipio",
-        "ano_declarado",
-        "cbo_2002_ocupacao",
-        "cnae_10_classe",
-        "cnae_20_classe",
-        "cnae_20_subclas",
-        "faixa_empr_inicio_jan",
-        "grau_instrucao",
-        "qtd_hora_contrat",
-        "ibge_subsetor",
-        "idade",
-        "ind_aprendiz",
-        "ind_portador_defic",
-        "raca_cor",
-        "salario_mensal",
-        "saldo_mov",
-        "sexo",
-        "tempo_emprego",
-        "tipo_estab",
-        "tipo_defic",
-        "tipo_mov_desagregado",
-        "uf",
-        "bairros_sp",
-        "bairros_fortaleza",
-        "bairros_rj",
-        "distritos_sp",
-        "regioes_adm_df",
-        "mesorregiao",
-        "microrregiao",
-        "regiao_adm_rj",
-        "regiao_adm_sp",
-        "regiao_corede",
-        "regiao_corede_04",
-        "regiao_gov_sp",
-        "regiao_senac_pr",
-        "regiao_senai_pr",
-        "regiao_senai_sp",
-        "subregiao_senai_pr",
-        "ind_trab_parcial",
-        "ind_trab_intermitente",
-    ]
-
-    df.columns = hard_coded_cols
-
+def padroniza_novo_caged(df, municipios):
     ## cria coluna ano e mes apartir da competencia declarada
     df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
     df["mes"] = df["competencia_declarada"].apply(lambda x: int(str(x)[4:]))
-    df = df.drop([], 1)
+
+    ## cria colunas que nao existem em outros arquivos
+    if df["ano"].unique()[0] <= 2019:
+        check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
+        create_cols = [col for col in check_cols if col not in df.columns.tolist()]
+
+        for col in create_cols:
+            df[col] = np.nan
+
+        hard_coded_cols = [
+            "admitidos_desligados",
+            "competencia_declarada",
+            "municipio",
+            "ano_declarado",
+            "cbo_2002_ocupacao",
+            "cnae_10_classe",
+            "cnae_20_classe",
+            "cnae_20_subclas",
+            "faixa_empr_inicio_jan",
+            "grau_instrucao",
+            "qtd_hora_contrat",
+            "ibge_subsetor",
+            "idade",
+            "ind_aprendiz",
+            "ind_portador_defic",
+            "raca_cor",
+            "salario_mensal",
+            "saldo_mov",
+            "sexo",
+            "tempo_emprego",
+            "tipo_estab",
+            "tipo_defic",
+            "tipo_mov_desagregado",
+            "uf",
+            "bairros_sp",
+            "bairros_fortaleza",
+            "bairros_rj",
+            "distritos_sp",
+            "regioes_adm_df",
+            "mesorregiao",
+            "microrregiao",
+            "regiao_adm_rj",
+            "regiao_adm_sp",
+            "regiao_corede",
+            "regiao_corede_04",
+            "regiao_gov_sp",
+            "regiao_senac_pr",
+            "regiao_senai_pr",
+            "regiao_senai_sp",
+            "subregiao_senai_pr",
+            "ind_trab_parcial",
+            "ind_trab_intermitente",
+        ]
+
+        df.columns = hard_coded_cols
+    else:
+        # remove colunas redundantes
+        df = df.drop(
+            ["competencia_declarada", "uf", "regiao"],
+            1,
+        )
 
     # renomeia municipio para padrao do diretorio de municipios
     rename_cols = {
@@ -196,12 +202,6 @@ def padroniza_caged(df, municipios):
 
     # adiciona id_municio do diretorio de municipios
     df = df.merge(municipios, on="id_municipio_6", how="left")
-
-    # remove colunas redundantes
-    df = df.drop(
-        ["competencia_declarada", "ano_declarado", "uf", "mesorregiao", "microrregiao"],
-        1,
-    )
 
     # organiza a ordem das colunas
     first_cols = ["ano", "mes", "sigla_uf", "id_municipio", "id_municipio_6"]
@@ -222,5 +222,57 @@ def padroniza_caged(df, municipios):
             df[col] = np.where(df[col].str.contains("{ñ"), np.nan, df[col])
 
     df = df[df["sigla_uf"].notnull()]
+
+    return df
+
+
+def rename_novo_caged(df, option):
+    rename_cols_estabelecimentos = {
+        "competaancia": "competencia_declarada",
+        "regiao": "regiao",
+        "uf": "uf",
+        "municapio": "municipio",
+        "seaao": "cnae_20_classe",
+        "subclasse": "cnae_20_subclas",
+        "admitidos": "admitidos",
+        "desligados": "desligados",
+        "fonte_desl": "fonte_desligamento",
+        "saldomovimentaaao": "saldo_movimentacao",
+        "tipoempregador": "tipo_empregador",
+        "tipoestabelecimento": "tipo_estab",
+        "tamestabjan": "faixa_empr_inicio_jan",
+    }
+
+    rename_cols_movimentacao = {
+        "competaancia": "competencia_declarada",
+        "regiao": "regiao",
+        "uf": "uf",
+        "municapio": "municipio",
+        "seaao": "cnae_20_classe",
+        "subclasse": "cnae_20_subclas",
+        "saldomovimentaaao": "saldo_mov",
+        "cbo2002ocupaaao": "cbo_2002_ocupacao",
+        "categoria": "categoria_trabalhador",
+        "graudeinstruaao": "grau_instrucao",
+        "idade": "idade",
+        "horascontratuais": "qtd_hora_contrat",
+        "raaacor": "raca_cor",
+        "sexo": "sexo",
+        "tipoempregador": "tipo_empregador",
+        "tipoestabelecimento": "tipo_estab",
+        "tipomovimentaaao": "tipo_movimentacao",
+        "tipodedeficiaancia": "tipo_defic",
+        "indtrabintermitente": "ind_trab_intermitente",
+        "indtrabparcial": "ind_trab_parcial",
+        "salario": "salario_mensal",
+        "tamestabjan": "faixa_empr_inicio_jan",
+        "indicadoraprendiz": "ind_aprendiz",
+        "fonte": "fonte_movimentacao",
+    }
+
+    if option == "movimentacao":
+        df = df.rename(columns=rename_cols_movimentacao)
+    else:
+        df = df.rename(columns=rename_cols_estabelecimentos)
 
     return df
