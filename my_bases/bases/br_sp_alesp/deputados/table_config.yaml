@@ -1,45 +1,63 @@
+source_bucket_name: basedosdados-sv
+project_id_staging: gabinete-sv
+project_id_prod: gabinete-sv
 table_id: deputados # AUTO GENERATED
 dataset_id: br_sp_alesp # AUTO GENERATED
 
-last_updated: 2020-10-21 # AUTO GENERATED
+url_ckan: https://basedosdados.org/dataset/br-sp-alesp # AUTO GENERATED
+url_github: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp # AUTO GENERATED
+
+version: <vA.B> # REQUIRED
+
+last_updated: 2021-02-18 # AUTO GENERATED
 
 # Descreva a tabela. Essas são as primeiras frases que um usuário vai ver.
 # Você não precisa ser muito conciso. Sinta-se a vontade para dar exemplos de
 # como usar os dados.
 # Se souber, liste também aplicações: pesquisa, apps, etc. que usem os dados.
-description: | # REQUIRED
-    Lista dos Deputados Estaduais do Estado de São Paulo da legislatura atual
+description: |  # REQUIRED
+    <descrição>
+
+# Quem está completando esse arquivo config?
+published_by:
+    name: <nome [você]>  # REQUIRED
+    code_url: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp/code # REQUIRED
+    website: <website>
+    email: <email>
 
 # Qual organização/departamento/pessoa tratou os dados?
 # As vezes há um ponto intermediário entre os dados originais e subir na Base dos Dados.
 # Se essa pessoa é você, preencha abaixo com suas informações.
 treated_by:
-    name: Diego Oliveira # REQUIRED
-    code_url: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp/code # REQUIRED
-    website: https://www.al.sp.gov.br/repositorioDados/deputados/deputados.xml
-    email: ds.oliveira404@gmail.com
-
-# Quem está completando esse arquivo config?
-published_by:
-    name: Diego Oliveira # REQUIRED
-    code_url: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp/code # REQUIRED
-    website: github.com/d116626
-    email: ds.oliveira404@gmail.com
+    name: <nome>
+    code_url: <onde encontrar código de tratamento>
+    website: <onde encontrar os dados tratados>
+    email: <email>
 
 # Se houve passos de tratamento, limpeza e manipulação de dados, descreva-os aqui.
-treatment_description: |
-    Padronização do nome das colunas, remoção de textos e logos, unificação das bases
+treatment_description: | 
+    <CEPESP fez X. Eu fiz K>
 
 # Com qual frequência a base é atualizada?
-# Opções: hora | dia | semana | mês | 1 ano | 2 anos | 5 anos | 10 anos | único | recorrente
-data_update_frequency: 1 ano # REQUIRED
+# Opções: hora | dia | semana | mes | 1 ano | 2 anos | 5 anos | 10 anos | unico | recorrente
+data_update_frequency: <frequência> # REQUIRED 
 
-# Nível da observação: quais colunas identificam uma linha unicamente?
+# Nível da observação (qual é a granularidade de cada linha na tabela)
 # Escolha todas as opções necessárias.
-# Regras: minúsculo, sem acento, singular.
-# Opções (exemplos): pais, estado, municipio, cidade, hora, dia, semana, mes, ano, etc.
-observation_level:
-    - matricula
+# Regras:
+#   - minúsculo, sem acento, singular.
+#   - em portugues (ou seja, não use os nomes de colunas abaixo)
+# Exemplos: pais, estado, municipio, cidade, hora, dia, semana, mes, ano, etc.
+observation_level: #REQUIRED
+    - <primeira coluna>
+    - <segunda coluna>
+
+# Quais colunas identificam uma linha unicamente?
+# Preencha com os nomes de colunas. Ex: id_municipio, ano.
+# Pode ser vazio pois certas tabelas não possuem identificadores.
+primary_keys:
+    - <primeira coluna>
+    - <segunda coluna>
 
 # Qual é a cobertura espacial da tabela?
 # Regras:
@@ -51,18 +69,23 @@ observation_level:
 # Exemplo 2: tabela que cubra países inteiros na América Latina
 #   - brasil, argentina, peru, equador
 coverage_geo:
-    - brasil
-    - SP
+    - <admin0 - pais>
+    - <admin1 - estados/regioes/etc>
+    - <admin2 - municipios/counties/etc>
+    - <admin3 - distritos/subdistritos/etc>
 
 # Qual é a cobertura temporal (em anos) da tabela?
-# Opções: pre-1999, 2000, 2001, ..., 2019, 2020
+# Opções: ..., 1990, 1991, ..., 1999, 2000, 2001, ..., 2019, 2020, ...
 coverage_time:
-    - 2020
+    - <ano 1>
+    - <ano 2>
+
 # Liste as colunas da tabela que representam partições.
 # Não esqueça de deletar essas colunas nas tabelas .csv na hora de subir para o BigQuery.
 # Isso poupará muito tempo e dinheiro às pessoas utilizando essa tabela.
 # Se não houver partições, não modifique abaixo.
-partitions: # REQUIRED
+partitions: # REQUIRED  
+    - ano
 
 # Quais são as colunas? Certifique-se de escrever uma boa descrição, as pessoas vão gostar
 # para saber sobre o que é a coluna.
@@ -73,62 +96,15 @@ partitions: # REQUIRED
 # Para esses, defina is_in_staging como False.
 # Além disso, você deve adicionar as colunas de partição aqui e definir is_partition como True.
 columns: # REQUIRED
-    - name: matricula
-      description: Número de matrícula do deputado
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: nome_parlamentar
-      description: Nome parlamentar do deputado
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: aniversario
-      description: Dia e mês do aniversário do deputado
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: partido
-      description: Partido ao qual o deputado pertence
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: situacao
-      description: Situação domandato dodeputadona legislatura atual
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: email
-      description: Email do deputado
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: sala
-      description: Sala do gabinete do deputado no prédio da Alesp
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: placa_veiculo
-      description: Placa do veículo oficial usado pelo deputado
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: home_page
-      description: Endereço da página do deputado na internet
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: andar
-      description: Andar no qual se localiza o gabinete do deputado no prédio da Alesp
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: id_deputado
-      description: Identificador único do deputado no sistema Parlamento Web
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
-
-    - name: id_spl
-      description: Identificador único do deputado no sistema SPL (Sistema de Processo Legislativo)
-      is_in_staging: True # Bool [True, False], whether the column is in the staging table
-      is_partition: False # Bool [True, False], whether the column is a partition.
+  
+    -   
+        name: test_data
+        description: <descrição da coluna>
+        is_in_staging: True # Bool [True, False], whether the column is in the staging table
+        is_partition: False # Bool [True, False], whether the column is a partition.
+  
+    -   
+        name: ano
+        description: <descrição da coluna>
+        is_in_staging: True # Bool [True, False], whether the column is in the staging table
+        is_partition: True # Bool [True, False], whether the column is a partition.
