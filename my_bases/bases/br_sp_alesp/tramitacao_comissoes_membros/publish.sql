@@ -19,19 +19,14 @@ TIPOS:
 
 */
 
-CREATE VIEW gabinete-sv.br_sp_alesp.deputados AS
+CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_membros AS
 SELECT 
-SAFE_CAST(idDeputado AS INT64) idDeputado,
-SAFE_CAST(nomeParlamentar AS STRING) nomeParlamentar,
-SAFE_CAST(aniversario AS STRING) aniversario,
-SAFE_CAST(partido AS STRING) partido,
-SAFE_CAST(situacao AS STRING) situacao,
-SAFE_CAST(email AS STRING) email,
-SAFE_CAST(sala AS STRING) sala,
-SAFE_CAST(placaVeiculo AS STRING) placaVeiculo,
-SAFE_CAST(homePage AS STRING) homePage,
-SAFE_CAST(andar AS STRING) andar,
-SAFE_CAST(matricula AS STRING) matricula,
-SAFE_CAST(IdSPL AS STRING) IdSPL,
-SAFE_CAST(numero_deputados AS INT64) numero_deputados
-from gabinete-sv.br_sp_alesp_staging.deputados as t
+SAFE_CAST(DataInicio AS STRING) DataInicio,
+SAFE_CAST(Efetivo AS STRING) Efetivo,
+SAFE_CAST(IdComissao AS INT64) IdComissao,
+SAFE_CAST(IdMembro AS INT64) IdMembro,
+SAFE_CAST(IdPapel AS INT64) IdPapel,
+SAFE_CAST(NomeMembro AS STRING) NomeMembro,
+SAFE_CAST(Papel AS STRING) Papel,
+SAFE_CAST(SiglaComissao AS STRING) SiglaComissao
+from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_membros as t

@@ -19,19 +19,9 @@ TIPOS:
 
 */
 
-CREATE VIEW gabinete-sv.br_sp_alesp.deputados AS
+CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_index_palavras_chave AS
 SELECT 
-SAFE_CAST(idDeputado AS INT64) idDeputado,
-SAFE_CAST(nomeParlamentar AS STRING) nomeParlamentar,
-SAFE_CAST(aniversario AS STRING) aniversario,
-SAFE_CAST(partido AS STRING) partido,
-SAFE_CAST(situacao AS STRING) situacao,
-SAFE_CAST(email AS STRING) email,
-SAFE_CAST(sala AS STRING) sala,
-SAFE_CAST(placaVeiculo AS STRING) placaVeiculo,
-SAFE_CAST(homePage AS STRING) homePage,
-SAFE_CAST(andar AS STRING) andar,
-SAFE_CAST(matricula AS STRING) matricula,
-SAFE_CAST(IdSPL AS STRING) IdSPL,
-SAFE_CAST(numero_deputados AS INT64) numero_deputados
-from gabinete-sv.br_sp_alesp_staging.deputados as t
+SAFE_CAST(IdPalavra AS INT64) IdPalavra,
+SAFE_CAST(Palavra AS STRING) Palavra,
+SAFE_CAST(PalavraSemAcento AS STRING) PalavraSemAcento
+from gabinete-sv.br_sp_alesp_staging.tramitacao_index_palavras_chave as t

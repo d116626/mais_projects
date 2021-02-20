@@ -1,7 +1,7 @@
 source_bucket_name: basedosdados-sv
 project_id_staging: gabinete-sv
 project_id_prod: gabinete-sv
-table_id: deputados # AUTO GENERATED
+table_id: despesas_gabinete # AUTO GENERATED
 dataset_id: br_sp_alesp # AUTO GENERATED
 
 url_ckan: https://basedosdados.org/dataset/br-sp-alesp # AUTO GENERATED
@@ -97,79 +97,55 @@ partitions: # REQUIRED
 columns: # REQUIRED
   
     -   
-        name: idDeputado
+        name: Ano
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: nomeParlamentar
+        name: Mes
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: aniversario
+        name: Data
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: partido
+        name: Matricula
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: situacao
+        name: Deputado
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: email
+        name: CNPJ
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: sala
+        name: Fornecedor
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: placaVeiculo
+        name: Tipo
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: homePage
-        description: <descrição da coluna>
-        is_in_staging: True # Bool [True, False], whether the column is in the staging table
-        is_partition: False # Bool [True, False], whether the column is a partition.
-  
-    -   
-        name: andar
-        description: <descrição da coluna>
-        is_in_staging: True # Bool [True, False], whether the column is in the staging table
-        is_partition: False # Bool [True, False], whether the column is a partition.
-  
-    -   
-        name: matricula
-        description: <descrição da coluna>
-        is_in_staging: True # Bool [True, False], whether the column is in the staging table
-        is_partition: False # Bool [True, False], whether the column is a partition.
-  
-    -   
-        name: IdSPL
-        description: <descrição da coluna>
-        is_in_staging: True # Bool [True, False], whether the column is in the staging table
-        is_partition: False # Bool [True, False], whether the column is a partition.
-  
-    -   
-        name: numero_deputados
+        name: Valor
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.

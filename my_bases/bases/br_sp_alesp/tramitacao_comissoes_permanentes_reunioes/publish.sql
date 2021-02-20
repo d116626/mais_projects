@@ -19,19 +19,16 @@ TIPOS:
 
 */
 
-CREATE VIEW gabinete-sv.br_sp_alesp.deputados AS
+CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_permanentes_reunioes AS
 SELECT 
-SAFE_CAST(idDeputado AS INT64) idDeputado,
-SAFE_CAST(nomeParlamentar AS STRING) nomeParlamentar,
-SAFE_CAST(aniversario AS STRING) aniversario,
-SAFE_CAST(partido AS STRING) partido,
-SAFE_CAST(situacao AS STRING) situacao,
-SAFE_CAST(email AS STRING) email,
-SAFE_CAST(sala AS STRING) sala,
-SAFE_CAST(placaVeiculo AS STRING) placaVeiculo,
-SAFE_CAST(homePage AS STRING) homePage,
-SAFE_CAST(andar AS STRING) andar,
-SAFE_CAST(matricula AS STRING) matricula,
-SAFE_CAST(IdSPL AS STRING) IdSPL,
-SAFE_CAST(numero_deputados AS INT64) numero_deputados
-from gabinete-sv.br_sp_alesp_staging.deputados as t
+SAFE_CAST(Situacao AS STRING) Situacao,
+SAFE_CAST(Data AS STRING) Data,
+SAFE_CAST(IdComissao AS INT64) IdComissao,
+SAFE_CAST(IdPauta AS INT64) IdPauta,
+SAFE_CAST(IdReuniao AS INT64) IdReuniao,
+SAFE_CAST(Presidente AS STRING) Presidente,
+SAFE_CAST(NrConvocacao AS STRING) NrConvocacao,
+SAFE_CAST(NrLegislatura AS STRING) NrLegislatura,
+SAFE_CAST(TipoConvocacao AS STRING) TipoConvocacao,
+SAFE_CAST(CodSituacao AS STRING) CodSituacao
+from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_permanentes_reunioes as t
