@@ -25,6 +25,10 @@ def download_caged_file(ano, mes, raw_path):
     download_path_year = raw_path + f"{ano}"
     download_path_month = download_path_year + f"/{int(mes)}/"
 
+    ### cria pasta data caso n exista
+    if not os.path.exists("../data"):
+        os.mkdir("../data")
+
     ## cria pastas
     if os.path.exists(download_path_year):
         if os.path.exists(download_path_month):
