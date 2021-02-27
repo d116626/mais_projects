@@ -74,7 +74,40 @@ def make_dirs(path, folder):
 def create_dataset_folders(
     file_table_reference, path="../data/censo/bases/tratado/organized"
 ):
-    shutil.rmtree(path)
-    os.mkdir(path)
+    # shutil.rmtree(path)
+    if not os.path.exists(path):
+        os.mkdir(path)
+
     for folder in list(file_table_reference.values()):
         make_dirs(path, folder)
+
+
+def rename_and_move_files(xls_files, datasets_path):
+    for xls_file in xls_files:
+        try:
+            tipo = uf_folder = xls_file.split("/")[-1].split("_")[1][2:]
+            uf_folder = xls_file.split("/")[-1].split("_")[1][-6:][:2]
+            filename = xls_file.split("/")[-1].split("_")[0]
+        except:
+            tipo = uf_folder = xls_file.split("/")[-1].split("-")[1][2:]
+            uf_folder = xls_file.split("/")[-1].split("-")[1][:2]
+            filename = xls_file.split("/")[-1].split("-")[0]
+
+        if uf_folder == "P1":
+            uf_folder = "SP1"
+        if uf_folder == "P2":
+            uf_folder = "SP2"
+
+        save_folder = file_table_reference[filename.lower()]
+
+        file_path = "/".join(xls_file.split("/")[:-1])
+        rename_file = f"{file_path}/{filename.lower()}_{uf_folder.lower()}.xls"
+
+        os.rename(xls_file, rename_file)
+        xls_file = rename_file
+
+        delete_file = f"{datasets_path}/{save_folder.lower()}/{filename.lower()}_{uf_folder.lower()}.xls"
+        if os.path.exists(delete_file):
+            os.remove(delete_file)
+
+        shutil.move(xls_file, f"{datasets_path}/{save_folder}")
