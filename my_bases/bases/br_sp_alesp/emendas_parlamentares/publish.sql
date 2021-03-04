@@ -21,6 +21,7 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.emendas_parlamentares AS
 SELECT 
+SAFE_CAST(ano AS INT64) ano,
 SAFE_CAST(parlamentar AS STRING) parlamentar,
 SAFE_CAST(entidade_beneficiada AS STRING) entidade_beneficiada,
 SAFE_CAST(municipio AS STRING) municipio,
