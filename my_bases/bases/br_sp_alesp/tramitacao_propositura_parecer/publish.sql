@@ -21,19 +21,19 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_propositura_parecer AS
 SELECT 
-SAFE_CAST(AnoParecer AS STRING) AnoParecer,
-SAFE_CAST(Descricao AS STRING) Descricao,
-SAFE_CAST(Data AS STRING) Data,
-SAFE_CAST(AdReferendum AS STRING) AdReferendum,
-SAFE_CAST(RelatorEspecial AS STRING) RelatorEspecial,
-SAFE_CAST(VotoVencido AS STRING) VotoVencido,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdParecer AS INT64) IdParecer,
-SAFE_CAST(IdTipoParecer AS INT64) IdTipoParecer,
-SAFE_CAST(TipoParecer AS STRING) TipoParecer,
-SAFE_CAST(NrParecer AS STRING) NrParecer,
-SAFE_CAST(SiglaComissao AS STRING) SiglaComissao,
-SAFE_CAST(TpParecer AS STRING) TpParecer,
-SAFE_CAST(URL AS STRING) URL
+SAFE_CAST(ano_parecer AS STRING) ano_parecer,
+SAFE_CAST(descricao AS STRING) descricao,
+SAFE_CAST(data AS STRING) data,
+SAFE_CAST(ad_referendum AS STRING) ad_referendum,
+SAFE_CAST(relator_especial AS STRING) relator_especial,
+SAFE_CAST(voto_vencido AS STRING) voto_vencido,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_parecer AS STRING) id_parecer,
+SAFE_CAST(id_tipo_parecer AS STRING) id_tipo_parecer,
+SAFE_CAST(tipo_parecer AS STRING) tipo_parecer,
+SAFE_CAST(numero_parecer AS STRING) numero_parecer,
+SAFE_CAST(sigla_comissao AS STRING) sigla_comissao,
+SAFE_CAST(tipo_parecer1 AS STRING) tipo_parecer1,
+SAFE_CAST(url AS STRING) url
 from gabinete-sv.br_sp_alesp_staging.tramitacao_propositura_parecer as t

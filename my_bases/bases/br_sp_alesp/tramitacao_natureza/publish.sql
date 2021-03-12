@@ -21,8 +21,8 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_natureza AS
 SELECT 
-SAFE_CAST(idNatureza AS INT64) idNatureza,
-SAFE_CAST(nmNatureza AS STRING) nmNatureza,
-SAFE_CAST(sgNatureza AS STRING) sgNatureza,
-SAFE_CAST(tpNatureza AS STRING) tpNatureza
+SAFE_CAST(id_natureza AS STRING) id_natureza,
+SAFE_CAST(nome_natureza AS STRING) nome_natureza,
+SAFE_CAST(sigla_natureza AS STRING) sigla_natureza,
+SAFE_CAST(tipo_natureza AS STRING) tipo_natureza
 from gabinete-sv.br_sp_alesp_staging.tramitacao_natureza as t

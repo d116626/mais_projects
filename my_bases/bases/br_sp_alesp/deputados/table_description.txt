@@ -15,10 +15,6 @@ Código: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp/code
 -----------
 Nome: <nome>
 
-Partições (Filtre a tabela por essas colunas para economizar dinheiro e tempo)
----------
-- ano
-
 
 
 

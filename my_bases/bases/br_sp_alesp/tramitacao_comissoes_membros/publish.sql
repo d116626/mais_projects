@@ -21,12 +21,12 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_membros AS
 SELECT 
-SAFE_CAST(DataInicio AS STRING) DataInicio,
-SAFE_CAST(Efetivo AS STRING) Efetivo,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(IdMembro AS INT64) IdMembro,
-SAFE_CAST(IdPapel AS INT64) IdPapel,
-SAFE_CAST(NomeMembro AS STRING) NomeMembro,
-SAFE_CAST(Papel AS STRING) Papel,
-SAFE_CAST(SiglaComissao AS STRING) SiglaComissao
+SAFE_CAST(data_inicio AS STRING) data_inicio,
+SAFE_CAST(efetivo AS STRING) efetivo,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(id_membro AS STRING) id_membro,
+SAFE_CAST(id_papel AS STRING) id_papel,
+SAFE_CAST(nome_membro AS STRING) nome_membro,
+SAFE_CAST(papel AS STRING) papel,
+SAFE_CAST(sigla_comissao AS STRING) sigla_comissao
 from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_membros as t
