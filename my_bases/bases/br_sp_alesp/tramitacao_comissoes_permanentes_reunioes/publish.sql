@@ -21,14 +21,14 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_permanentes_reunioes AS
 SELECT 
-SAFE_CAST(Situacao AS STRING) Situacao,
-SAFE_CAST(Data AS STRING) Data,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(IdPauta AS INT64) IdPauta,
-SAFE_CAST(IdReuniao AS INT64) IdReuniao,
-SAFE_CAST(Presidente AS STRING) Presidente,
-SAFE_CAST(NrConvocacao AS STRING) NrConvocacao,
-SAFE_CAST(NrLegislatura AS STRING) NrLegislatura,
-SAFE_CAST(TipoConvocacao AS STRING) TipoConvocacao,
-SAFE_CAST(CodSituacao AS STRING) CodSituacao
+SAFE_CAST(situacao AS STRING) situacao,
+SAFE_CAST(data AS STRING) data,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(id_pauta AS STRING) id_pauta,
+SAFE_CAST(idreuniao AS STRING) idreuniao,
+SAFE_CAST(presidente AS STRING) presidente,
+SAFE_CAST(numero_convocacao AS STRING) numero_convocacao,
+SAFE_CAST(numero_legislatura AS STRING) numero_legislatura,
+SAFE_CAST(tipo_convocacao AS STRING) tipo_convocacao,
+SAFE_CAST(codigo_situacao AS STRING) codigo_situacao
 from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_permanentes_reunioes as t

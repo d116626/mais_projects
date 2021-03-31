@@ -21,6 +21,6 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_documento_palavras_chave AS
 SELECT 
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdPalavra AS INT64) IdPalavra
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_palavra AS STRING) id_palavra
 from gabinete-sv.br_sp_alesp_staging.tramitacao_documento_palavras_chave as t

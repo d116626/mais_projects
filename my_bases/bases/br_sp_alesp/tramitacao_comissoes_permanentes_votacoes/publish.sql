@@ -21,12 +21,12 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_permanentes_votacoes AS
 SELECT 
-SAFE_CAST(Voto AS STRING) Voto,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(IdDeputado AS INT64) IdDeputado,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdPauta AS INT64) IdPauta,
-SAFE_CAST(IdReuniao AS INT64) IdReuniao,
-SAFE_CAST(Deputado AS STRING) Deputado,
-SAFE_CAST(TipoVoto AS STRING) TipoVoto
+SAFE_CAST(voto AS STRING) voto,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(id_deputado AS STRING) id_deputado,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_pauta AS STRING) id_pauta,
+SAFE_CAST(id_reuniao AS STRING) id_reuniao,
+SAFE_CAST(deputado AS STRING) deputado,
+SAFE_CAST(tipo_voto AS STRING) tipo_voto
 from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_permanentes_votacoes as t

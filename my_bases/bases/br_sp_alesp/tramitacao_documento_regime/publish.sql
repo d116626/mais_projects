@@ -21,9 +21,9 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_documento_regime AS
 SELECT 
-SAFE_CAST(DataFim AS STRING) DataFim,
-SAFE_CAST(DataInicio AS STRING) DataInicio,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdRegime AS INT64) IdRegime,
-SAFE_CAST(NomeRegime AS STRING) NomeRegime
+SAFE_CAST(data_fim AS STRING) data_fim,
+SAFE_CAST(data_inicio AS STRING) data_inicio,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_regime AS STRING) id_regime,
+SAFE_CAST(nome_regime AS STRING) nome_regime
 from gabinete-sv.br_sp_alesp_staging.tramitacao_documento_regime as t

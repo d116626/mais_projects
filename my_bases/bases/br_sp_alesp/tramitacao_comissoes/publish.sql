@@ -21,8 +21,8 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes AS
 SELECT 
-SAFE_CAST(DataFimComissao AS STRING) DataFimComissao,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(NomeComissao AS STRING) NomeComissao,
-SAFE_CAST(SiglaComissao AS STRING) SiglaComissao
+SAFE_CAST(data_fim_comissao AS STRING) data_fim_comissao,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(nome_comissao AS STRING) nome_comissao,
+SAFE_CAST(sigla_comissao AS STRING) sigla_comissao
 from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes as t

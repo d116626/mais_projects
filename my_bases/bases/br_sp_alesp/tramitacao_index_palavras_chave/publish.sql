@@ -21,7 +21,7 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_index_palavras_chave AS
 SELECT 
-SAFE_CAST(IdPalavra AS INT64) IdPalavra,
-SAFE_CAST(Palavra AS STRING) Palavra,
-SAFE_CAST(PalavraSemAcento AS STRING) PalavraSemAcento
+SAFE_CAST(id_palavra AS STRING) id_palavra,
+SAFE_CAST(palavra AS STRING) palavra,
+SAFE_CAST(palavra_sem_acento AS STRING) palavra_sem_acento
 from gabinete-sv.br_sp_alesp_staging.tramitacao_index_palavras_chave as t

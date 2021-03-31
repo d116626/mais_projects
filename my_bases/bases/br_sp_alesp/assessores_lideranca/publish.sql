@@ -21,9 +21,9 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.assessores_lideranca AS
 SELECT 
-SAFE_CAST(Servidor AS STRING) Servidor,
-SAFE_CAST(Cargo AS STRING) Cargo,
-SAFE_CAST(Lotacao AS STRING) Lotacao,
-SAFE_CAST(Regime AS STRING) Regime,
-SAFE_CAST(Partido AS STRING) Partido
+SAFE_CAST(servidor AS STRING) servidor,
+SAFE_CAST(cargo AS STRING) cargo,
+SAFE_CAST(lotacao AS STRING) lotacao,
+SAFE_CAST(regime AS STRING) regime,
+SAFE_CAST(partido AS STRING) partido
 from gabinete-sv.br_sp_alesp_staging.assessores_lideranca as t

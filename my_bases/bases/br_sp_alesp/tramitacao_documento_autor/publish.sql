@@ -21,7 +21,7 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_documento_autor AS
 SELECT 
-SAFE_CAST(IdAutor AS INT64) IdAutor,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(NomeAutor AS STRING) NomeAutor
+SAFE_CAST(id_autor AS STRING) id_autor,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(nome_autor AS STRING) nome_autor
 from gabinete-sv.br_sp_alesp_staging.tramitacao_documento_autor as t

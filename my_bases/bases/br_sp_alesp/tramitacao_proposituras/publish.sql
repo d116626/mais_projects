@@ -21,12 +21,12 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_proposituras AS
 SELECT 
-SAFE_CAST(AnoLegislativo AS STRING) AnoLegislativo,
-SAFE_CAST(CodOriginalidade AS STRING) CodOriginalidade,
-SAFE_CAST(Ementa AS STRING) Ementa,
-SAFE_CAST(DtEntradaSistema AS STRING) DtEntradaSistema,
-SAFE_CAST(DtPublicacao AS STRING) DtPublicacao,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdNatureza AS INT64) IdNatureza,
-SAFE_CAST(NroLegislativo AS STRING) NroLegislativo
+SAFE_CAST(ano_legislativo AS STRING) ano_legislativo,
+SAFE_CAST(codigo_originalidade AS STRING) codigo_originalidade,
+SAFE_CAST(ementa AS STRING) ementa,
+SAFE_CAST(data_entrada_sistema AS STRING) data_entrada_sistema,
+SAFE_CAST(data_publicacao AS STRING) data_publicacao,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_natureza AS STRING) id_natureza,
+SAFE_CAST(numero_legislativo AS STRING) numero_legislativo
 from gabinete-sv.br_sp_alesp_staging.tramitacao_proposituras as t

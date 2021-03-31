@@ -17,13 +17,38 @@ import py7zr
 from scpts import manipulation
 
 
-def download_caged_file(ano, mes, raw_path):
+def create_folder_structure():
+    ### cria pasta data caso n exista
+    if not os.path.exists("../data"):
+        os.mkdir("../data")
+        os.mkdir("../data/caged/")
+
+    if not os.path.exists("../data/caged/raw"):
+        os.mkdir("../data/caged/raw")
+    if not os.path.exists("../data/caged/raw/antigo_caged"):
+        os.mkdir("../data/caged/raw/antigo_caged")
+    if not os.path.exists("../data/caged/raw/novo_caged"):
+        os.mkdir("../data/caged/raw/novo_caged")
+    if not os.path.exists("../data/caged/raw/antigo_caged_ajustes"):
+        os.mkdir("../data/caged/raw/antigo_caged_ajustes")
+
+    if not os.path.exists("../data/caged/clean/"):
+        os.mkdir("../data/caged/clean")
+    if not os.path.exists("../data/caged/clean/antigo_caged"):
+        os.mkdir("../data/caged/clean/antigo_caged")
+    if not os.path.exists("../data/caged/clean/novo_caged"):
+        os.mkdir("../data/caged/clean/novo_caged")
+    if not os.path.exists("../data/caged/clean/antigo_caged_ajustes"):
+        os.mkdir("../data/caged/clean/antigo_caged_ajustes")
+
+
+def download_caged_file(download_link, ano, mes, raw_path):
     ## cria link e path das pastas
-    download_link = (
-        f"ftp://ftp.mtps.gov.br/pdet/microdados/CAGED/{ano}/CAGEDEST_{mes}{ano}.7z"
-    )
-    download_path_year = raw_path + f"{ano}"
+    download_path_year = raw_path + f"/{ano}"
     download_path_month = download_path_year + f"/{int(mes)}/"
+
+    # cria estrutura de pastas
+    create_folder_structure()
 
     ## cria pastas
     if os.path.exists(download_path_year):
@@ -54,6 +79,10 @@ def download_caged_file(ano, mes, raw_path):
         print(f"{mes}/{ano} criado em {t}")
 
 
+def download_novo_caged(ano, mes, raw_path):
+    print("kkk")
+
+
 def get_file_names_and_clean_residues(path_month):
     filename_7z = [file for file in os.listdir(path_month) if ".7z" in file][0][:-3]
     filename_txt = [file for file in os.listdir(path_month) if ".txt" in file]
@@ -68,9 +97,7 @@ def get_file_names_and_clean_residues(path_month):
 
 
 def make_dirs(path, folder, var):
-    if os.path.exists(f"{path}{var}={folder}/"):
-        pass
-    else:
+    if not os.path.exists(f"{path}{var}={folder}/"):
         os.mkdir(f"{path}{var}={folder}/")
 
 
@@ -80,14 +107,11 @@ def make_folder_tree(clean_path, ano, mes, uf="SP"):
     make_dirs(path_ano, mes, var="mes")
     path_mes = f"{clean_path}/ano={ano}/mes={mes}/"
     make_dirs(path_mes, uf, var="sigla_uf")
-    path_uf = f"{clean_path}/ano={ano}/mes={mes}/sigla_uf={uf}/"
-    return path_uf
+    return f"{clean_path}/ano={ano}/mes={mes}/sigla_uf={uf}/"
 
 
 def extract_file(path_month, filename, save_rows=10):
-    if os.path.exists(f"{path_month}{filename}.csv"):
-        pass
-    else:
+    if not os.path.exists(f"{path_month}{filename}.csv"):
         archive = py7zr.SevenZipFile(f"{path_month}{filename}.7z", mode="r").extractall(
             path=path_month
         )
@@ -214,7 +238,7 @@ def padroniza_novo_caged(df, municipios):
     objct_cols = df.select_dtypes(include=["object"]).columns.tolist()
 
     for col in objct_cols:
-        if col == "salario_mensal" or col == "tempo_emprego":
+        if col in ["salario_mensal", "tempo_emprego"]:
             df[col] = pd.to_numeric(
                 df[col].str.replace(",", "."), downcast="float", errors="coerce"
             )

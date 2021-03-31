@@ -21,24 +21,12 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.despesas_gabinete_mandato AS
 SELECT 
-SAFE_CAST(Ano AS INT64) Ano,
-SAFE_CAST(Mes AS INT64) Mes,
-SAFE_CAST(Valor AS FLOAT64) Valor,
-SAFE_CAST(CNPJ AS STRING) CNPJ,
-SAFE_CAST(Tipo AS STRING) Tipo,
-SAFE_CAST(Fornecedor AS STRING) Fornecedor,
-SAFE_CAST(Data AS STRING) Data,
-SAFE_CAST(idDeputado AS INT64) idDeputado,
+SAFE_CAST(ano AS STRING) ano,
+SAFE_CAST(mes AS STRING) mes,
+SAFE_CAST(matricula AS STRING) matricula,
 SAFE_CAST(deputado AS STRING) deputado,
-SAFE_CAST(aniversario AS STRING) aniversario,
-SAFE_CAST(partido AS STRING) partido,
-SAFE_CAST(situacao AS STRING) situacao,
-SAFE_CAST(email AS STRING) email,
-SAFE_CAST(sala AS STRING) sala,
-SAFE_CAST(placaVeiculo AS STRING) placaVeiculo,
-SAFE_CAST(homePage AS STRING) homePage,
-SAFE_CAST(andar AS STRING) andar,
-SAFE_CAST(matricula AS INT64) matricula,
-SAFE_CAST(IdSPL AS STRING) IdSPL,
-SAFE_CAST(numero_deputados AS INT64) numero_deputados
+SAFE_CAST(cnpj AS STRING) cnpj,
+SAFE_CAST(fornecedor AS STRING) fornecedor,
+SAFE_CAST(tipo AS STRING) tipo,
+SAFE_CAST(valor AS STRING) valor
 from gabinete-sv.br_sp_alesp_staging.despesas_gabinete_mandato as t

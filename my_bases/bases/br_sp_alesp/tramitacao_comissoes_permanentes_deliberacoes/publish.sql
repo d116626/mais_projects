@@ -21,12 +21,12 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_comissoes_permanentes_deliberacoes AS
 SELECT 
-SAFE_CAST(Deliberacao AS STRING) Deliberacao,
-SAFE_CAST(DataInclusao AS STRING) DataInclusao,
-SAFE_CAST(DataSaida AS STRING) DataSaida,
-SAFE_CAST(IdDeliberacao AS INT64) IdDeliberacao,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdPauta AS INT64) IdPauta,
-SAFE_CAST(IdReuniao AS INT64) IdReuniao,
-SAFE_CAST(NrOrdem AS INT64) NrOrdem
+SAFE_CAST(deliberacao AS STRING) deliberacao,
+SAFE_CAST(data_inclusao AS STRING) data_inclusao,
+SAFE_CAST(data_saida AS STRING) data_saida,
+SAFE_CAST(id_deliberacao AS STRING) id_deliberacao,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_pauta AS STRING) id_pauta,
+SAFE_CAST(id_reuniao AS STRING) id_reuniao,
+SAFE_CAST(nuumero_ordem AS STRING) nuumero_ordem
 from gabinete-sv.br_sp_alesp_staging.tramitacao_comissoes_permanentes_deliberacoes as t

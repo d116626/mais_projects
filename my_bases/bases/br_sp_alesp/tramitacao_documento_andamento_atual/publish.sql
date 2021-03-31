@@ -21,13 +21,13 @@ TIPOS:
 
 CREATE VIEW gabinete-sv.br_sp_alesp.tramitacao_documento_andamento_atual AS
 SELECT 
-SAFE_CAST(Descricao AS STRING) Descricao,
-SAFE_CAST(Data AS STRING) Data,
-SAFE_CAST(IdComissao AS INT64) IdComissao,
-SAFE_CAST(IdDocumento AS INT64) IdDocumento,
-SAFE_CAST(IdEtapa AS INT64) IdEtapa,
-SAFE_CAST(IdTpAndamento AS INT64) IdTpAndamento,
-SAFE_CAST(NmEtapa AS STRING) NmEtapa,
-SAFE_CAST(NrOrdem AS STRING) NrOrdem,
-SAFE_CAST(TpAndamento AS STRING) TpAndamento
+SAFE_CAST(descricao AS STRING) descricao,
+SAFE_CAST(data AS STRING) data,
+SAFE_CAST(id_comissao AS STRING) id_comissao,
+SAFE_CAST(id_documento AS STRING) id_documento,
+SAFE_CAST(id_etapa AS STRING) id_etapa,
+SAFE_CAST(id_tipo_andamento AS STRING) id_tipo_andamento,
+SAFE_CAST(nome_etapa AS STRING) nome_etapa,
+SAFE_CAST(numero_ordem AS STRING) numero_ordem,
+SAFE_CAST(tipo_andamento AS STRING) tipo_andamento
 from gabinete-sv.br_sp_alesp_staging.tramitacao_documento_andamento_atual as t

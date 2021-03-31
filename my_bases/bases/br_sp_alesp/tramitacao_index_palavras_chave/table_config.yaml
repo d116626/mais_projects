@@ -9,7 +9,7 @@ url_github: https://github.com/basedosdados/mais/tree/master/bases/br_sp_alesp #
 
 version: <vA.B> # REQUIRED
 
-last_updated: 2021-02-19 # AUTO GENERATED
+last_updated: 2021-03-12 # AUTO GENERATED
 
 # Descreva a tabela. Essas são as primeiras frases que um usuário vai ver.
 # Você não precisa ser muito conciso. Sinta-se a vontade para dar exemplos de
@@ -97,19 +97,19 @@ partitions: # REQUIRED
 columns: # REQUIRED
   
     -   
-        name: IdPalavra
+        name: id_palavra
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: Palavra
+        name: palavra
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
   
     -   
-        name: PalavraSemAcento
+        name: palavra_sem_acento
         description: <descrição da coluna>
         is_in_staging: True # Bool [True, False], whether the column is in the staging table
         is_partition: False # Bool [True, False], whether the column is a partition.
