@@ -240,108 +240,71 @@ def extract_file(path_month, filename, save_rows=10):
         os.remove(f"{path_month}{filename_txt}.txt")
 
 
-raw_path = "../data/caged/raw/"
-clean_save_path = "../data/caged/clean/antigo_caged/"
-folders = glob.glob("../data/caged/raw/antigo_caged/*/*/")
-
-municipios = pd.read_parquet(f"{raw_path}municipios.parquet")
-
-for folder in folders[:1]:
-    ano = folder.split("/")[-3]
-    mes = folder.split("/")[-2]
-
-    filename_7z = caged.get_file_names_and_clean_residues(folder, foce_remove_csv=False)
-
-    ## verifica se o arquivo ja foi tratado
-    if (
-        os.path.exists(f"{clean_save_path}/ano={ano}/mes={mes}")
-        and len(os.listdir(f"{clean_save_path}/ano={ano}/mes={mes}")) == 27
-    ):
-        print(f"{ano}-{mes} --> ja tratado\n")
-    else:
-        ## extrai o arquivo zipado, cria um novo arquivo .csv e deleta o arquivo extraido (.txt)
-        caged.extract_file(folder, filename_7z, save_rows=None)
-        print(f"{ano}-{mes} --> extraido")
-
-        ## le o arquivo
-        filename = [file for file in os.listdir(folder) if ".csv" in file][0][:-4]
-        df = pd.read_csv(f"{folder}{filename}.csv")
-
-
 #####======================= PADRONIZA DADOS CAGED ANTIGO =======================#####
 def padroniza_antigo_caged(df, municipios):
-    print("em construcao")
-
-
-#####======================= PADRONIZA DADOS NOVO CAGED =======================#####
-
-
-def padroniza_novo_caged(df, municipios):
     ## cria coluna ano e mes apartir da competencia declarada
     df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
     df["mes"] = df["competencia_declarada"].apply(lambda x: int(str(x)[4:]))
 
     ## cria colunas que nao existem em outros arquivos
-    if df["ano"].unique()[0] <= 2019:
-        check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
-        create_cols = [col for col in check_cols if col not in df.columns.tolist()]
+    check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
+    create_cols = [col for col in check_cols if col not in df.columns.tolist()]
+    for col in create_cols:
+        df[col] = np.nan
 
-        for col in create_cols:
-            df[col] = np.nan
+    hard_coded_cols = [
+        "admitidos_desligados",
+        "competencia_declarada",
+        "municipio",
+        "ano_declarado",
+        "cbo_2002_ocupacao",
+        "cnae_10_classe",
+        "cnae_20_classe",
+        "cnae_20_subclas",
+        "faixa_empr_inicio_jan",
+        "grau_instrucao",
+        "qtd_hora_contrat",
+        "ibge_subsetor",
+        "idade",
+        "ind_aprendiz",
+        "ind_portador_defic",
+        "raca_cor",
+        "salario_mensal",
+        "saldo_mov",
+        "sexo",
+        "tempo_emprego",
+        "tipo_estab",
+        "tipo_defic",
+        "tipo_mov_desagregado",
+        "uf",
+        "bairros_sp",
+        "bairros_fortaleza",
+        "bairros_rj",
+        "distritos_sp",
+        "regioes_adm_df",
+        "mesorregiao",
+        "microrregiao",
+        "regiao_adm_rj",
+        "regiao_adm_sp",
+        "regiao_corede",
+        "regiao_corede_04",
+        "regiao_gov_sp",
+        "regiao_senac_pr",
+        "regiao_senai_pr",
+        "regiao_senai_sp",
+        "subregiao_senai_pr",
+        "ind_trab_parcial",
+        "ind_trab_intermitente",
+    ]
 
-        hard_coded_cols = [
-            "admitidos_desligados",
-            "competencia_declarada",
-            "municipio",
-            "ano_declarado",
-            "cbo_2002_ocupacao",
-            "cnae_10_classe",
-            "cnae_20_classe",
-            "cnae_20_subclas",
-            "faixa_empr_inicio_jan",
-            "grau_instrucao",
-            "qtd_hora_contrat",
-            "ibge_subsetor",
-            "idade",
-            "ind_aprendiz",
-            "ind_portador_defic",
-            "raca_cor",
-            "salario_mensal",
-            "saldo_mov",
-            "sexo",
-            "tempo_emprego",
-            "tipo_estab",
-            "tipo_defic",
-            "tipo_mov_desagregado",
-            "uf",
-            "bairros_sp",
-            "bairros_fortaleza",
-            "bairros_rj",
-            "distritos_sp",
-            "regioes_adm_df",
-            "mesorregiao",
-            "microrregiao",
-            "regiao_adm_rj",
-            "regiao_adm_sp",
-            "regiao_corede",
-            "regiao_corede_04",
-            "regiao_gov_sp",
-            "regiao_senac_pr",
-            "regiao_senai_pr",
-            "regiao_senai_sp",
-            "subregiao_senai_pr",
-            "ind_trab_parcial",
-            "ind_trab_intermitente",
-        ]
+    df.columns = hard_coded_cols
 
-        df.columns = hard_coded_cols
-    else:
-        # remove colunas redundantes
-        df = df.drop(
-            ["competencia_declarada", "uf", "regiao"],
-            1,
-        )
+    df = clean_caged(df, municipios)
 
+    return df
+
+
+def clean_caged(df, municipios):
     # renomeia municipio para padrao do diretorio de municipios
     rename_cols = {
         "municipio": "id_municipio_6",
@@ -370,6 +333,23 @@ def padroniza_novo_caged(df, municipios):
             df[col] = np.where(df[col].str.contains("{ñ"), np.nan, df[col])
 
     df = df[df["sigla_uf"].notnull()]
+
+
+#####======================= PADRONIZA DADOS NOVO CAGED =======================#####
+
+
+def padroniza_novo_caged(df, municipios):
+    ## cria coluna ano e mes apartir da competencia declarada
+    df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
+    df["mes"] = df["competencia_declarada"].apply(lambda x: int(str(x)[4:]))
+
+    ## cria colunas que nao existem em outros arquivos
+    df = df.drop(
+        ["competencia_declarada", "uf", "regiao"],
+        1,
+    )
+
+    df = clean_caged(df, municipios)
 
     return df
 
