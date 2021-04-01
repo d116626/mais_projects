@@ -42,45 +42,133 @@ def create_folder_structure():
         os.mkdir("../data/caged/clean/antigo_caged_ajustes")
 
 
-def download_caged_file(download_link, ano, mes, raw_path):
-    ## cria link e path das pastas
-    download_path_year = raw_path + f"/{ano}"
+def download_data(download_link, download_path, filename):
+    ## download do arquivo
+    with closing(request.urlopen(download_link)) as r:
+        with open(os.path.join(download_path, filename), "wb") as f:
+            shutil.copyfileobj(r, f)
+
+
+#####======================= ANTIGO CAGED DOWNLOAD =======================#####
+
+
+def download_caged_normal(download_link, download_path_year, ano, mes):
+    """
+    download dos arquivos do caged para os anos 2007 a 2019. Tambem vale para arquivos de ajustes entre 2010 e 2019
+    """
     download_path_month = download_path_year + f"/{int(mes)}/"
-
-    # cria estrutura de pastas
-    create_folder_structure()
-
     ## cria pastas
     if os.path.exists(download_path_year):
-        if os.path.exists(download_path_month):
-            pass
-        else:
+        if not os.path.exists(download_path_month):
             os.mkdir(download_path_month)
     else:
         os.mkdir(download_path_year)
-        if os.path.exists(download_path_month):
-            pass
-        else:
+        if not os.path.exists(download_path_month):
             os.mkdir(download_path_month)
 
-    filename = f"CAGEDEST_{mes}{ano}.7z"
+    if "AJUSTE" not in download_link:
+        filename = f"CAGEDEST_{mes}{ano}.7z"
+    else:
+        filename = f"CAGEDEST_AJUSTES_{mes}{ano}.7z"
 
     ## verifica se arquivo ja existe
     if os.path.exists(os.path.join(download_path_month, filename)):
-        print(f"{mes}/{ano} ja existe")
+        print(f"{mes}/{ano} | já existe")
     else:
-        ti = time.time()
-        ## download do arquivo
-        with closing(request.urlopen(download_link)) as r:
-            with open(os.path.join(download_path_month, filename), "wb") as f:
-                shutil.copyfileobj(r, f)
-        tf = time.time()
-        t = time.strftime("%M:%S", time.gmtime((tf - ti)))
-        print(f"{mes}/{ano} criado em {t}")
+
+        try:
+            ti = time.time()
+            download_data(download_link, download_path_month, filename)
+            t = time.strftime("%M:%S", time.gmtime((time.time() - ti)))
+            print(f"{mes}/{ano} | criado em {t}")
+        except:
+            print(f"{mes}/{ano} | não conseguiu baixar")
+
+
+def download_caged_ajustes_2002a2009(download_link, download_path_year, ano):
+    """
+    download dos arquivos de ajustes do caged para os anos 2002 a 2009
+    """
+    if not os.path.exists(download_path_year):
+        os.mkdir(download_path_year)
+        ## verifica se arquivo ja existe
+    filename = filename = f"CAGEDEST_AJUSTES_{ano}.7z"
+    if os.path.exists(os.path.join(download_path_year, filename)):
+        print(f"{ano} | já existe")
+    else:
+        try:
+            ti = time.time()
+            download_data(download_link, download_path_year, filename)
+            t = time.strftime("%M:%S", time.gmtime((time.time() - ti)))
+            print(f"{ano} | criado em {t}")
+        except:
+            print(f"{ano} | não conseguiu baixar")
+
+
+def download_caged_file(download_link, ano=None, mes=None, raw_path=None):
+    # cria estrutura de pastas
+    create_folder_structure()
+
+    ## cria link e path das pastas
+    download_path_year = raw_path + f"/{ano}"
+
+    if isinstance(ano, int):
+        download_caged_normal(download_link, download_path_year, ano, mes)
+    else:
+        download_caged_ajustes_2002a2009(download_link, download_path_year, ano)
+
+
+def caged_antigo_download():
+    raw_path = "../data/caged/raw/antigo_caged"
+    clean_path = "../data/caged/clean/antigo_caged"
+
+    anos = [i for i in range(2007, 2020)]
+    meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+
+    print("#===== CAGED ANTIGO =====#\n")
+    for ano in anos:
+        for mes in meses:
+            download_link = f"ftp://ftp.mtps.gov.br/pdet/microdados/CAGED/{ano}/CAGEDEST_{mes}{ano}.7z"
+            download_caged_file(download_link, ano, mes, raw_path)
+    print("\n")
+
+
+def caged_antigo_ajustes_download():
+    raw_path = "../data/caged/raw/antigo_caged_ajustes"
+    clean_path = "../data/caged/clean/antigo_caged_ajustes"
+
+    anos = [i for i in range(2010, 2020)]
+    meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+
+    print("#=====  CAGED ANTIGO AJUSTES =====#\n")
+    for ano in anos:
+        for mes in meses:
+            download_link = f"ftp://ftp.mtps.gov.br/pdet/microdados/CAGED_AJUSTES/{ano}/CAGEDEST_AJUSTES_{mes}{ano}.7z"
+            download_caged_file(download_link, ano, mes, raw_path)
+    print("\n")
+
+
+def caged_antigo_ajustes_2002a2009_download():
+    raw_path = "../data/caged/raw/antigo_caged_ajustes"
+    clean_path = "../data/caged/clean/antigo_caged_ajustes"
+
+    anos = [str(i) for i in range(2007, 2010)]
+
+    print("#===== CAGED ANTIGO AJUSTES 2002a2009 =====#\n")
+    for ano in anos:
+        download_link = f"ftp://ftp.mtps.gov.br/pdet/microdados/CAGED_AJUSTES/2002a2009/CAGEDEST_AJUSTES_{ano}.7z"
+        download_caged_file(download_link, ano, mes=None, raw_path=raw_path)
+    print("\n")
+
+
+#####======================= NOVO CAGED DWONLOAD =======================#####
 
 
 def download_novo_caged(ano, mes, raw_path):
     print("kkk")
+
+
+#####======================= MANIPULA ARQUIVOS =======================#####
 
 
 def get_file_names_and_clean_residues(path_month):
@@ -150,6 +238,9 @@ def extract_file(path_month, filename, save_rows=10):
         df.to_csv(f"{path_month}{filename}.csv", index=False, encoding="utf-8")
 
         os.remove(f"{path_month}{filename_txt}.txt")
+
+
+#####======================= PADRONIZA DADOS =======================#####
 
 
 def padroniza_novo_caged(df, municipios):
