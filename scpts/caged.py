@@ -171,14 +171,14 @@ def download_novo_caged(ano, mes, raw_path):
 #####======================= MANIPULA ARQUIVOS =======================#####
 
 
-def get_file_names_and_clean_residues(path_month):
+def get_file_names_and_clean_residues(path_month, foce_remove_csv=True):
     filename_7z = [file for file in os.listdir(path_month) if ".7z" in file][0][:-3]
     filename_txt = [file for file in os.listdir(path_month) if ".txt" in file]
     filename_csv = [file for file in os.listdir(path_month) if ".csv" in file]
 
     if filename_txt != []:
         os.remove(f"{path_month}{filename_txt[0][:-4] }.txt")
-    if filename_csv != []:
+    if filename_csv != [] and foce_remove_csv == True:
         os.remove(f"{path_month}{filename_csv[0][:-4]}.csv")
     # print(path_month)
     return filename_7z
@@ -240,7 +240,40 @@ def extract_file(path_month, filename, save_rows=10):
         os.remove(f"{path_month}{filename_txt}.txt")
 
 
-#####======================= PADRONIZA DADOS =======================#####
+raw_path = "../data/caged/raw/"
+clean_save_path = "../data/caged/clean/antigo_caged/"
+folders = glob.glob("../data/caged/raw/antigo_caged/*/*/")
+
+municipios = pd.read_parquet(f"{raw_path}municipios.parquet")
+
+for folder in folders[:1]:
+    ano = folder.split("/")[-3]
+    mes = folder.split("/")[-2]
+
+    filename_7z = caged.get_file_names_and_clean_residues(folder, foce_remove_csv=False)
+
+    ## verifica se o arquivo ja foi tratado
+    if (
+        os.path.exists(f"{clean_save_path}/ano={ano}/mes={mes}")
+        and len(os.listdir(f"{clean_save_path}/ano={ano}/mes={mes}")) == 27
+    ):
+        print(f"{ano}-{mes} --> ja tratado\n")
+    else:
+        ## extrai o arquivo zipado, cria um novo arquivo .csv e deleta o arquivo extraido (.txt)
+        caged.extract_file(folder, filename_7z, save_rows=None)
+        print(f"{ano}-{mes} --> extraido")
+
+        ## le o arquivo
+        filename = [file for file in os.listdir(folder) if ".csv" in file][0][:-4]
+        df = pd.read_csv(f"{folder}{filename}.csv")
+
+
+#####======================= PADRONIZA DADOS CAGED ANTIGO =======================#####
+def padroniza_antigo_caged(df, municipios):
+    print("em construcao")
+
+
+#####======================= PADRONIZA DADOS NOVO CAGED =======================#####
 
 
 def padroniza_novo_caged(df, municipios):
