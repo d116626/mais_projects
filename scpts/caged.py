@@ -21,25 +21,26 @@ def create_folder_structure():
     ### cria pasta data caso n exista
     if not os.path.exists("../data"):
         os.mkdir("../data")
+    if not os.path.exists("../data/caged/"):
         os.mkdir("../data/caged/")
 
     if not os.path.exists("../data/caged/raw"):
         os.mkdir("../data/caged/raw")
-    if not os.path.exists("../data/caged/raw/antigo_caged"):
-        os.mkdir("../data/caged/raw/antigo_caged")
-    if not os.path.exists("../data/caged/raw/novo_caged"):
-        os.mkdir("../data/caged/raw/novo_caged")
-    if not os.path.exists("../data/caged/raw/antigo_caged_ajustes"):
-        os.mkdir("../data/caged/raw/antigo_caged_ajustes")
+    if not os.path.exists("../data/caged/raw/caged_antigo"):
+        os.mkdir("../data/caged/raw/caged_antigo")
+    if not os.path.exists("../data/caged/raw/caged_novo"):
+        os.mkdir("../data/caged/raw/caged_novo")
+    if not os.path.exists("../data/caged/raw/caged_antigo_ajustes"):
+        os.mkdir("../data/caged/raw/caged_antigo_ajustes")
 
     if not os.path.exists("../data/caged/clean/"):
         os.mkdir("../data/caged/clean")
-    if not os.path.exists("../data/caged/clean/antigo_caged"):
-        os.mkdir("../data/caged/clean/antigo_caged")
-    if not os.path.exists("../data/caged/clean/novo_caged"):
-        os.mkdir("../data/caged/clean/novo_caged")
-    if not os.path.exists("../data/caged/clean/antigo_caged_ajustes"):
-        os.mkdir("../data/caged/clean/antigo_caged_ajustes")
+    if not os.path.exists("../data/caged/clean/caged_antigo"):
+        os.mkdir("../data/caged/clean/caged_antigo")
+    if not os.path.exists("../data/caged/clean/caged_novo"):
+        os.mkdir("../data/caged/clean/caged_novo")
+    if not os.path.exists("../data/caged/clean/caged_antigo_ajustes"):
+        os.mkdir("../data/caged/clean/caged_antigo_ajustes")
 
 
 def download_data(download_link, download_path, filename):
@@ -89,9 +90,13 @@ def download_caged_ajustes_2002a2009(download_link, download_path_year, ano):
     """
     download dos arquivos de ajustes do caged para os anos 2002 a 2009
     """
+
     if not os.path.exists(download_path_year):
         os.mkdir(download_path_year)
-        ## verifica se arquivo ja existe
+        os.mkdir(download_path_year + "/1")
+
+    download_path_year = download_path_year + "/1"
+    ## verifica se arquivo ja existe
     filename = filename = f"CAGEDEST_AJUSTES_{ano}.7z"
     if os.path.exists(os.path.join(download_path_year, filename)):
         print(f"{ano} | já existe")
@@ -119,8 +124,8 @@ def download_caged_file(download_link, ano=None, mes=None, raw_path=None):
 
 
 def caged_antigo_download():
-    raw_path = "../data/caged/raw/antigo_caged"
-    clean_path = "../data/caged/clean/antigo_caged"
+    raw_path = "../data/caged/raw/caged_antigo"
+    clean_path = "../data/caged/clean/caged_antigo"
 
     anos = [i for i in range(2007, 2020)]
     meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
@@ -134,8 +139,8 @@ def caged_antigo_download():
 
 
 def caged_antigo_ajustes_download():
-    raw_path = "../data/caged/raw/antigo_caged_ajustes"
-    clean_path = "../data/caged/clean/antigo_caged_ajustes"
+    raw_path = "../data/caged/raw/caged_antigo_ajustes"
+    clean_path = "../data/caged/clean/caged_antigo_ajustes"
 
     anos = [i for i in range(2010, 2020)]
     meses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
@@ -149,8 +154,8 @@ def caged_antigo_ajustes_download():
 
 
 def caged_antigo_ajustes_2002a2009_download():
-    raw_path = "../data/caged/raw/antigo_caged_ajustes"
-    clean_path = "../data/caged/clean/antigo_caged_ajustes"
+    raw_path = "../data/caged/raw/caged_antigo_ajustes"
+    clean_path = "../data/caged/clean/caged_antigo_ajustes"
 
     anos = [str(i) for i in range(2007, 2010)]
 
@@ -161,26 +166,106 @@ def caged_antigo_ajustes_2002a2009_download():
     print("\n")
 
 
+def caged_antigo_ajustes_2002a2009_extract_organize(folders, force_remove_csv=False):
+    folders = [
+        folder
+        for folder in folders
+        for ano in ["2007", "2008", "2009"]
+        if ano in folder
+    ]
+    # all_cols = pd.DataFrame()
+    for folder in folders:
+        ano = folder.split("/")[-2]
+        filename_7z = get_file_names_and_clean_residues(folder, force_remove_csv)
+        extract_file(folder, filename_7z, save_rows=None)
+        print(f"{ano} | extraido")
+
+        filename = [file for file in os.listdir(folder) if ".csv" in file][0][:-4]
+        df = pd.read_csv(f"{folder}{filename}.csv")
+
+        df["ano"] = df["competencia_declarada"].apply(lambda x: str(x)[:4])
+        df["mes"] = df["competencia_declarada"].apply(lambda x: str(x)[4:])
+
+        for mes in df["mes"].unique():
+            if not os.path.exists(f"{folder}{str(int(mes))}"):
+                os.mkdir(f"{folder}{str(int(mes))}")
+
+            mask = df["mes"] == mes
+            dd = df[mask]
+
+            dd = dd.drop(["ano", "mes"], 1)
+            dd.to_csv(
+                f"{folder}{str(int(mes))}/{filename_7z[:-5]}_{mes}{ano}.csv",
+                index=False,
+                encoding="utf-8",
+            )
+
+
 #####======================= NOVO CAGED DWONLOAD =======================#####
 
 
-def download_novo_caged(ano, mes, raw_path):
+def download_caged_novo(ano, mes, raw_path):
     print("kkk")
 
 
 #####======================= MANIPULA ARQUIVOS =======================#####
 
 
-def get_file_names_and_clean_residues(path_month, foce_remove_csv=True):
-    filename_7z = [file for file in os.listdir(path_month) if ".7z" in file][0][:-3]
-    filename_txt = [file for file in os.listdir(path_month) if ".txt" in file]
+def extract_file(path_month, filename, save_rows=10):
+    if not os.path.exists(f"{path_month}{filename}.csv"):
+        archive = py7zr.SevenZipFile(f"{path_month}{filename}.7z", mode="r").extractall(
+            path=path_month
+        )
+
+        filename_txt = [
+            file for file in os.listdir(path_month) if ".txt" in file.lower()
+        ][0]
+        try:
+
+            df = pd.read_csv(
+                f"{path_month}{filename_txt}",
+                sep=";",
+                encoding="latin-1",
+                nrows=save_rows,
+            )
+        except:
+            ## caso de erro de bad lines por conter um ; extra no arquivo txt
+            with open(
+                f"{path_month}{filename_txt}",
+                encoding="latin-1",
+            ) as f:
+                newText = f.read().replace(";99;", ";99")
+
+            with open(f"{path_month}{filename_txt}", "w") as f:
+                f.write(newText)
+
+            df = pd.read_csv(
+                f"{path_month}{filename_txt}",
+                sep=";",
+                encoding="latin-1",
+                nrows=save_rows,
+            )
+
+        df.columns = manipulation.normalize_cols(df.columns)
+
+        df.to_csv(f"{path_month}{filename}.csv", index=False, encoding="utf-8")
+
+        os.remove(f"{path_month}{filename_txt}")
+
+
+def get_file_names_and_clean_residues(path_month, force_remove_csv=True):
+    filename_txt = [file for file in os.listdir(path_month) if ".txt" in file.lower()]
     filename_csv = [file for file in os.listdir(path_month) if ".csv" in file]
+    try:
+        filename_7z = [file for file in os.listdir(path_month) if ".7z" in file][0][:-3]
+    except:
+        filename_7z = filename_csv[0][:-4]
 
     if filename_txt != []:
-        os.remove(f"{path_month}{filename_txt[0][:-4] }.txt")
-    if filename_csv != [] and foce_remove_csv == True:
+        os.remove(f"{path_month}{filename_txt[0]}")
+    if filename_csv != [] and force_remove_csv == True:
         os.remove(f"{path_month}{filename_csv[0][:-4]}.csv")
-    # print(path_month)
+
     return filename_7z
 
 
@@ -198,54 +283,254 @@ def make_folder_tree(clean_path, ano, mes, uf="SP"):
     return f"{clean_path}/ano={ano}/mes={mes}/sigla_uf={uf}/"
 
 
-def extract_file(path_month, filename, save_rows=10):
-    if not os.path.exists(f"{path_month}{filename}.csv"):
-        archive = py7zr.SevenZipFile(f"{path_month}{filename}.7z", mode="r").extractall(
-            path=path_month
+def save_partitioned_file(df, clean_save_path, ano, mes, file_name):
+    for uf in df.sigla_uf.unique():
+        ## filtra apenas o estado de interesse
+        df_uf = df[df["sigla_uf"] == uf]
+        ## exclui colunas particionadas
+        df_uf = df_uf.drop(["sigla_uf"], 1)
+        ## cria estrutura de pastas
+        path_uf = make_folder_tree(clean_save_path, ano, mes, uf)
+
+        df_uf.to_csv(f"{path_uf}{file_name}.csv", index=False)
+
+
+def caged_antigo_padronize_and_partitioned(
+    folders, clean_save_path, municipios, force_remove_csv=True
+):
+    # all_cols = pd.DataFrame()
+    for folder in folders:
+        ano = folder.split("/")[-3]
+        mes = folder.split("/")[-2]
+
+        filename_7z = get_file_names_and_clean_residues(folder, force_remove_csv)
+
+        ## verifica se o arquivo ja foi tratado
+        if (
+            os.path.exists(f"{clean_save_path}/ano={ano}/mes={mes}")
+            and len(os.listdir(f"{clean_save_path}/ano={ano}/mes={mes}")) == 27
+        ):
+            print(f"{ano}-{mes} | já tratado\n")
+        else:
+            ## extrai o arquivo zipado, cria um novo arquivo .csv e deleta o arquivo extraido (.txt)
+            if "ajustes" not in clean_save_path and int(ano) >= 2010:
+                extract_file(folder, filename_7z, save_rows=None)
+
+            print(f"{ano}-{mes} | extraido")
+
+            ## le o arquivo
+            filename = [file for file in os.listdir(folder) if ".csv" in file][0][:-4]
+            df = pd.read_csv(f"{folder}{filename}.csv")
+
+            ### padronizacao dos dados
+            if "ajustes" in clean_save_path:
+                df = padroniza_caged_antigo_ajustes(df, municipios)
+                mode = "ajustes"
+                save_name = "caged_antigo_ajustes"
+            else:
+                df = padroniza_caged_antigo(df, municipios)
+                mode = "padrao"
+                save_name = "caged_antigo"
+
+            print(
+                f"{ano}-{mes} | padronizado",
+                "|",
+                mode,
+            )
+
+            save_partitioned_file(df, clean_save_path, ano, mes, file_name=save_name)
+
+            ##remove arquivo csv do raw files
+            if force_remove_csv:
+                os.remove(f"{folder}{filename}.csv")
+
+            print(f"{ano}-{mes} | finalizado\n")
+
+            # # checa nome de todas as colunas
+            # dd = pd.DataFrame(df.columns.tolist(), columns=["cols"])
+            # dd = dd.transpose().reset_index(drop=True)
+            # cols = dd.columns.tolist()
+            # dd["ano"] = ano
+            # dd["mes"] = mes
+
+            # dd = dd[["ano", "mes"] + cols]
+
+            # all_cols = pd.concat([all_cols, dd])
+
+
+#####======================= PADRONIZA CAGED FUNCOES =======================#####
+
+
+def clean_caged(df, municipios):
+    ## cria coluna ano e mes apartir da competencia declarada
+    df["competencia_declarada"] = df["competencia_declarada"].apply(
+        lambda x: str(x)[:4] + "-" + str(x)[4:]
+    )
+    if "competencia_movimentacao" in df.columns.tolist():
+        df["competencia_movimentacao"] = df["competencia_movimentacao"].apply(
+            lambda x: str(x)[:4] + "-" + str(x)[4:]
         )
 
-        filename_txt = [file for file in os.listdir(path_month) if ".txt" in file][0][
-            :-4
-        ]
-        try:
+    # renomeia municipio para padrao do diretorio de municipios
+    rename_cols = {
+        "municipio": "id_municipio_6",
+    }
+    df = df.rename(columns=rename_cols)
 
-            df = pd.read_csv(
-                f"{path_month}{filename_txt}.txt",
-                sep=";",
-                encoding="latin-1",
-                nrows=save_rows,
+    # adiciona id_municio do diretorio de municipios
+    df = df.merge(municipios, on="id_municipio_6", how="left")
+
+    # remove strings do tipo {ñ e converte salario e tempo de emprego para float
+    objct_cols = df.select_dtypes(include=["object"]).columns.tolist()
+
+    for col in objct_cols:
+        if col in ["salario_mensal", "tempo_emprego"]:
+            df[col] = pd.to_numeric(
+                df[col].str.replace(",", "."), downcast="float", errors="coerce"
             )
-        except:
-            ## caso de erro de bad lines por conter um ; extra no arquivo txt
-            with open(
-                f"{path_month}{filename_txt}.txt",
-                encoding="latin-1",
-            ) as f:
-                newText = f.read().replace(";99;", ";99")
+        else:
+            df[col] = np.where(df[col].str.contains("{ñ"), np.nan, df[col])
+    df = df.drop(["mesorregiao", "microrregiao", "uf", "competencia_declarada"], 1)
+    df = df[df["sigla_uf"].notnull()]
 
-            with open(f"{path_month}{filename_txt}.txt", "w") as f:
-                f.write(newText)
+    return df
 
-            df = pd.read_csv(
-                f"{path_month}{filename_txt}.txt",
-                sep=";",
-                encoding="latin-1",
-                nrows=save_rows,
-            )
 
-        df.columns = manipulation.normalize_cols(df.columns)
+#####======================= PADRONIZA DADOS CAGED AJUSTES =======================#####
+def padroniza_caged_antigo_ajustes(df, municipios):
+    ## cria colunas que nao existem em outros arquivos
+    check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
+    create_cols = [col for col in check_cols if col not in df.columns.tolist()]
+    for col in create_cols:
+        df[col] = np.nan
 
-        df.to_csv(f"{path_month}{filename}.csv", index=False, encoding="utf-8")
+    hard_coded_cols = [
+        "admitidos_desligados",
+        "competencia_movimentacao",
+        "municipio",
+        "ano_movimentacao",
+        "cbo_94_ocupacao",
+        "cbo_2002_ocupacao",
+        "cnae_10_classe",
+        "faixa_empr_inicio_jan",
+        "grau_instrucao",
+        "qtd_hora_contrat",
+        "ibge_subsetor",
+        "idade",
+        "ind_aprendiz",
+        "salario_mensal",
+        "saldo_mov",
+        "sexo",
+        "tempo_emprego",
+        "tipo_estab",
+        "tipo_mov_desagregado",
+        "uf",
+        "competencia_declarada",
+        "bairros_sp",
+        "bairros_fortaleza",
+        "bairros_rj",
+        "distritos_sp",
+        "regioes_adm_df",
+        "mesorregiao",
+        "microrregiao",
+        "regiao_adm_rj",
+        "regiao_adm_sp",
+        "regiao_corede",
+        "regiao_corede_04",
+        "regiao_gov_sp",
+        "regiao_senac_pr",
+        "regiao_senai_pr",
+        "regiao_senai_sp",
+        "subregiao_senai_pr",
+        "regiao_metro_mte",
+        "cnae_20_subclas",
+        "raca_cor",
+        "ind_portador_defic",
+        "tipo_defic",
+        "ind_trab_parcial",
+        "ind_trab_intermitente",
+    ]
 
-        os.remove(f"{path_month}{filename_txt}.txt")
+    df.columns = hard_coded_cols
+
+    df = clean_caged(df, municipios)
+    df = df.drop(["ano_movimentacao"], 1)
+
+    columns_rename = {
+        "cbo_2002_ocupacao": "cbo_2002",
+        "cbo_94_ocupacao": "cbo_94",
+        "cnae_10_classe": "cnae_10",
+        "cnae_20_subclas": "cnae_20_subclasse",
+        "faixa_empr_inicio_jan": "faixa_emprego_inicio_janeiro",
+        "qtd_hora_contrat": "quantidade_horas_contratadas",
+        "ibge_subsetor": "subsetor_ibge",
+        "ind_aprendiz": "indicador_aprendiz",
+        "ind_portador_defic": "indicador_portador_deficiencia",
+        "saldo_mov": "saldo_movimentacao",
+        "tipo_estab": "tipo_estabelecimento",
+        "tipo_defic": "tipo_deficiencia",
+        "tipo_mov_desagregado": "tipo_movimentacao_desagregado",
+        "regioes_adm_df": "regiao_administrativas_df",
+        "regiao_adm_rj": "regiao_administrativas_rj",
+        "regiao_adm_sp": "regiao_administrativas_sp",
+        "ind_trab_parcial": "indicador_trabalho_parcial",
+        "ind_trab_intermitente": "indicador_trabalho_intermitente",
+        "raca_cor": "raca",
+        "regiao_metro_mte": "regiao_metropolitana_mte",
+    }
+
+    df = df.rename(columns=columns_rename)
+
+    organize_cols = [
+        "competencia_movimentacao",
+        "sigla_uf",
+        "id_municipio",
+        "id_municipio_6",
+        "admitidos_desligados",
+        "tipo_estabelecimento",
+        "tipo_movimentacao_desagregado",
+        "faixa_emprego_inicio_janeiro",
+        "tempo_emprego",
+        "quantidade_horas_contratadas",
+        "salario_mensal",
+        "saldo_movimentacao",
+        "indicador_aprendiz",
+        "indicador_trabalho_intermitente",
+        "indicador_trabalho_parcial",
+        "indicador_portador_deficiencia",
+        "tipo_deficiencia",
+        "cbo_94",
+        "cnae_10",
+        "cbo_2002",
+        "cnae_20_subclasse",
+        "grau_instrucao",
+        "idade",
+        "sexo",
+        "raca",
+        "subsetor_ibge",
+        "bairros_sp",
+        "bairros_fortaleza",
+        "bairros_rj",
+        "distritos_sp",
+        "regiao_administrativas_df",
+        "regiao_administrativas_rj",
+        "regiao_administrativas_sp",
+        "regiao_corede",
+        "regiao_corede_04",
+        "regiao_gov_sp",
+        "regiao_senac_pr",
+        "regiao_senai_pr",
+        "regiao_senai_sp",
+        "subregiao_senai_pr",
+        "regiao_metropolitana_mte",
+    ]
+
+    df = df[organize_cols]
+    return df
 
 
 #####======================= PADRONIZA DADOS CAGED ANTIGO =======================#####
-def padroniza_antigo_caged(df, municipios):
-    ## cria coluna ano e mes apartir da competencia declarada
-    df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
-    df["mes"] = df["competencia_declarada"].apply(lambda x: int(str(x)[4:]))
-
+def padroniza_caged_antigo(df, municipios):
     ## cria colunas que nao existem em outros arquivos
     check_cols = ["ind_trab_parcial", "ind_trab_intermitente"]
     create_cols = [col for col in check_cols if col not in df.columns.tolist()]
@@ -300,45 +585,83 @@ def padroniza_antigo_caged(df, municipios):
     df.columns = hard_coded_cols
 
     df = clean_caged(df, municipios)
+    df = df.drop(["ano_declarado"], 1)
+
+    columns_rename = {
+        "cbo_2002_ocupacao": "cbo_2002",
+        "cnae_10_classe": "cnae_10",
+        "cnae_20_classe": "cnae_20",
+        "cnae_20_subclas": "cnae_20_subclasse",
+        "faixa_empr_inicio_jan": "faixa_emprego_inicio_janeiro",
+        "qtd_hora_contrat": "quantidade_horas_contratadas",
+        "ibge_subsetor": "subsetor_ibge",
+        "ind_aprendiz": "indicador_aprendiz",
+        "ind_portador_defic": "indicador_portador_deficiencia",
+        "saldo_mov": "saldo_movimentacao",
+        "tipo_estab": "tipo_estabelecimento",
+        "tipo_defic": "tipo_deficiencia",
+        "tipo_mov_desagregado": "tipo_movimentacao_desagregado",
+        "regioes_adm_df": "regiao_administrativas_df",
+        "regiao_adm_rj": "regiao_administrativas_rj",
+        "regiao_adm_sp": "regiao_administrativas_sp",
+        "ind_trab_parcial": "indicador_trabalho_parcial",
+        "ind_trab_intermitente": "indicador_trabalho_intermitente",
+        "raca_cor": "raca",
+    }
+
+    df = df.rename(columns=columns_rename)
+
+    organize_cols = [
+        "sigla_uf",
+        "id_municipio",
+        "id_municipio_6",
+        "admitidos_desligados",
+        "tipo_estabelecimento",
+        "tipo_movimentacao_desagregado",
+        "faixa_emprego_inicio_janeiro",
+        "tempo_emprego",
+        "quantidade_horas_contratadas",
+        "salario_mensal",
+        "saldo_movimentacao",
+        "indicador_aprendiz",
+        "indicador_trabalho_intermitente",
+        "indicador_trabalho_parcial",
+        "indicador_portador_deficiencia",
+        "tipo_deficiencia",
+        "cnae_10",
+        "cbo_2002",
+        "cnae_20",
+        "cnae_20_subclasse",
+        "grau_instrucao",
+        "idade",
+        "sexo",
+        "raca",
+        "subsetor_ibge",
+        "bairros_sp",
+        "bairros_fortaleza",
+        "bairros_rj",
+        "distritos_sp",
+        "regiao_administrativas_df",
+        "regiao_administrativas_rj",
+        "regiao_administrativas_sp",
+        "regiao_corede",
+        "regiao_corede_04",
+        "regiao_gov_sp",
+        "regiao_senac_pr",
+        "regiao_senai_pr",
+        "regiao_senai_sp",
+        "subregiao_senai_pr",
+    ]
+
+    df = df[organize_cols]
 
     return df
-
-
-def clean_caged(df, municipios):
-    # renomeia municipio para padrao do diretorio de municipios
-    rename_cols = {
-        "municipio": "id_municipio_6",
-    }
-    df = df.rename(columns=rename_cols)
-
-    # adiciona id_municio do diretorio de municipios
-    df = df.merge(municipios, on="id_municipio_6", how="left")
-
-    # organiza a ordem das colunas
-    first_cols = ["ano", "mes", "sigla_uf", "id_municipio", "id_municipio_6"]
-    all_cols = first_cols + [
-        col for col in df.columns.tolist() if col not in first_cols
-    ]
-    df = df[all_cols]
-
-    # remove strings do tipo {ñ e converte salario e tempo de emprego para float
-    objct_cols = df.select_dtypes(include=["object"]).columns.tolist()
-
-    for col in objct_cols:
-        if col in ["salario_mensal", "tempo_emprego"]:
-            df[col] = pd.to_numeric(
-                df[col].str.replace(",", "."), downcast="float", errors="coerce"
-            )
-        else:
-            df[col] = np.where(df[col].str.contains("{ñ"), np.nan, df[col])
-
-    df = df[df["sigla_uf"].notnull()]
 
 
 #####======================= PADRONIZA DADOS NOVO CAGED =======================#####
 
 
-def padroniza_novo_caged(df, municipios):
+def padroniza_caged_novo(df, municipios):
     ## cria coluna ano e mes apartir da competencia declarada
     df["ano"] = df["competencia_declarada"].apply(lambda x: int(str(x)[:4]))
     df["mes"] = df["competencia_declarada"].apply(lambda x: int(str(x)[4:]))
@@ -354,7 +677,7 @@ def padroniza_novo_caged(df, municipios):
     return df
 
 
-def rename_novo_caged(df, option):
+def rename_caged_novo(df, option):
     rename_cols_estabelecimentos = {
         "competaancia": "competencia_declarada",
         "regiao": "regiao",
