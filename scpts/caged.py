@@ -313,7 +313,7 @@ def caged_antigo_padronize_and_partitioned(
             print(f"{ano}-{mes} | já tratado\n")
         else:
             ## extrai o arquivo zipado, cria um novo arquivo .csv e deleta o arquivo extraido (.txt)
-            if "ajustes" not in clean_save_path and int(ano) >= 2010:
+            if "ajustes" not in clean_save_path or (int(ano)) > 2009:
                 extract_file(folder, filename_7z, save_rows=None)
 
             print(f"{ano}-{mes} | extraido")
