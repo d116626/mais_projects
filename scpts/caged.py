@@ -537,19 +537,18 @@ def padroniza_caged_antigo(df, municipios):
     for col in create_cols:
         df[col] = np.nan
 
-    ## renomeia colunas para um caso de typo nos arquivos originais
-    if "competaancia_declarada" in df.columns.tolist():
-        rename_typo_columns = {
-            "competaancia_declarada": "competencia_declarada",
-            "municapio": "municipio",
-            "cbo_2002_ocupaaao": "cbo_2002_ocupacao",
-            "faixa_empr_inacio_jan": "faixa_empr_inicio_jan",
-            "grau_instruaao": "grau_instrucao",
-            "raaa_cor": "raca_cor",
-            "regiaes_adm_df": "regioes_adm_df",
-        }
+    ## renomeia colunas para alguns casos typo nos arquivos originais
+    rename_typo_columns = {
+        "competaancia_declarada": "competencia_declarada",
+        "municapio": "municipio",
+        "cbo_2002_ocupaaao": "cbo_2002_ocupacao",
+        "faixa_empr_inacio_jan": "faixa_empr_inicio_jan",
+        "grau_instruaao": "grau_instrucao",
+        "raaa_cor": "raca_cor",
+        "regiaes_adm_df": "regioes_adm_df",
+    }
 
-        df = df.rename(columns=rename_typo_columns)
+    df = df.rename(columns=rename_typo_columns)
 
     hard_coded_cols = [
         "admitidos_desligados",

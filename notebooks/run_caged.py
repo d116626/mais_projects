@@ -36,7 +36,7 @@ def main():
     municipios = pd.read_parquet("../data/caged/raw/municipios.parquet")
 
     caged.caged_antigo_padronize_and_partitioned(
-        folders, clean_save_path, municipios, force_remove_csv=False
+        folders[1:], clean_save_path, municipios, force_remove_csv=False
     )
 
     # # CAGED ANTIGO AJUSTES
