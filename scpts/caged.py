@@ -55,7 +55,8 @@ def download_data(download_link, download_path, filename):
 
 def download_caged_normal(download_link, download_path_year, ano, mes):
     """
-    download dos arquivos do caged para os anos 2007 a 2019. Tambem vale para arquivos de ajustes entre 2010 e 2019
+    download dos arquivos do caged para os anos 2007 a 2019.
+    Tambem vale para arquivos de ajustes entre 2010 e 2019
     """
     download_path_month = download_path_year + f"/{int(mes)}/"
     ## cria pastas
@@ -173,7 +174,8 @@ def caged_antigo_ajustes_2002a2009_download():
 def caged_antigo_ajustes_2002a2009_extract_organize(folders, force_remove_csv=False):
     """
     Os anos de 2002 a 2009 nao possuem arquivos para cada mes.
-    Essa funcão extrai o arquivo .7z e cria o .csv na mesma estrutura de ano/mes
+    Essa funcão extrai o arquivo .7z e cria o .csv na mesma
+    estrutura de ano/mes
     """
     folders = [
         folder
