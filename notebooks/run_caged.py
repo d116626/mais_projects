@@ -20,28 +20,46 @@ import basedosdados as bd
 import glob
 
 
+def filer_folders(folders, filtro):
+    return (
+        [
+            folder
+            for folder in folders
+            if folder.split("/")[-3] in [str(ano) for ano in filtro]
+        ]
+        if filtro
+        else folders
+    )
+
+
 def main():
-    # ### Padroniza CAGED ANTIGO AJUSTES
-    # clean_save_path = "../data/caged/clean/caged_antigo_ajustes/"
-    # folders = glob.glob("../data/caged/raw/caged_antigo_ajustes/*/*/")
-    # municipios = pd.read_parquet("../data/caged/raw/municipios.parquet")
+    ## Padroniza CAGED ANTIGO AJUScd noteTES
+    municipios = pd.read_parquet("../data/caged/raw/municipios.parquet")
+    clean_save_path = "../data/caged/clean/caged_antigo_ajustes/"
+    folders = glob.glob("../data/caged/raw/caged_antigo_ajustes/*/*/")
 
-    # caged.caged_antigo_padronize_and_partitioned(
-    #     folders, clean_save_path, municipios, force_remove_csv=False
-    # )
+    # filtro_anos = [2019]
+    # folders = filer_folders(folders, filtro_anos)
 
-    ### Padroniza CAGED ANTIGO
-    # clean_save_path = "../data/caged/clean/caged_antigo/"
-    # folders = glob.glob("../data/caged/raw/caged_antigo/*/*/")
-    # municipios = pd.read_parquet("../data/caged/raw/municipios.parquet")
+    caged.caged_antigo_padronize_and_partitioned(
+        folders, clean_save_path, municipios, force_remove_csv=True
+    )
 
-    # caged.caged_antigo_padronize_and_partitioned(
-    #     folders[1:], clean_save_path, municipios, force_remove_csv=False
-    # )
+    ## Padroniza CAGED ANTIGO
+    municipios = pd.read_parquet("../data/caged/raw/municipios.parquet")
+    clean_save_path = "../data/caged/clean/caged_antigo/"
+    folders = glob.glob("../data/caged/raw/caged_antigo/*/*/")
+
+    # filtro_anos = [2019]
+    # folders = filer_folders(folders, filtro_anos)
+
+    caged.caged_antigo_padronize_and_partitioned(
+        folders, clean_save_path, municipios, force_remove_csv=True
+    )
 
     # CAGED ANTIGO AJUSTES
 
-    # tb = Table("microdados_antigo_ajutes", "br_me_caged")
+    # tb = Table("microdados_antigos_ajutes", "br_me_caged")
 
     # tb.create(
     #     path="../data/caged/clean/caged_antigo_ajustes/2019/",
@@ -52,6 +70,7 @@ def main():
 
     # tb.publish(if_exists="replace")
 
+    # tb = Table("microdados_antigos_ajutes", "br_me_caged")
     # for ano in range(2007, 2019):
     #     tb.append(
     #         filepath=f"../data/caged/clean/caged_antigo_ajustes/{ano}/",
@@ -60,11 +79,11 @@ def main():
     #     )
     #     print(f"{ano} done!\n")
 
-    # tb.publish(if_exists='replace')
+    # tb.publish(if_exists="replace")
 
     # CAGED ANTIGO PADRAO
 
-    tb = Table("microdados_antigo", "br_me_caged")
+    # tb = Table("microdados_antigos", "br_me_caged")
 
     # tb.create(
     #     path="../data/caged/clean/caged_antigo/2019/",
@@ -75,15 +94,15 @@ def main():
 
     # tb.publish(if_exists="replace")
 
-    for ano in range(2016, 2019):
-        tb.append(
-            filepath=f"../data/caged/clean/caged_antigo/{ano}/",
-            partitions="ano=value/mes=value/sigla_uf=value",
-            if_exists="replace",
-        )
-        print(f"{ano} done!\n")
+    # for ano in range(2007, 2019):
+    #     tb.append(
+    #         filepath=f"../data/caged/clean/caged_antigo/{ano}/",
+    #         partitions="ano=value/mes=value/sigla_uf=value",
+    #         if_exists="replace",
+    #     )
+    #     print(f"{ano} done!\n")
 
-    tb.publish(if_exists="replace")
+    # tb.publish(if_exists="replace")
 
 
 if __name__ == "__main__":
