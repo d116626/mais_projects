@@ -96,7 +96,7 @@ def main():
 
     tb = Table("microdados_antigos", "br_me_caged")
 
-    for ano in range(2012, 2019):
+    for ano in range(2013, 2019):
         tb.append(
             filepath=f"../data/caged/clean/caged_antigo/{ano}/",
             partitions="ano=value/mes=value/sigla_uf=value",
