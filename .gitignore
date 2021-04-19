@@ -2744,3 +2744,6 @@ data/locais_votacao/input/local_votacao_2014.csv
 data/locais_votacao/input/local_votacao_2016.csv
 data/locais_votacao/input/local_votacao_2018.csv
 data/locais_votacao/input/local_votacao_2020.csv
+data/caged/raw/caged_antigo_ajustes/2007/CAGEDEST_AJUSTES_2007.csv
+data/caged/raw/caged_antigo_ajustes/2008/CAGEDEST_AJUSTES_2008.csv
+data/caged/raw/caged_antigo_ajustes/2009/CAGEDEST_AJUSTES_2009.csv
