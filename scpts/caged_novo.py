@@ -56,8 +56,10 @@ def get_download_links():
     tipos = [tipo for tipo in tipos if ".pdf" not in tipo]
 
     download_dict = {}
+
     for tipo in tipos:
         print(tipo)
+        tipo_lower = tipo.lower()
         year_url = download_url + tipo + "/"
         years = get_urls(year_url)
         ## adiciona 2020 hard coded caso n exista. problema no ftp dos microdados
@@ -83,6 +85,11 @@ def get_download_links():
             file_names_url + file_name for file_name in last_year_file_names
         ]
 
+        download_dict[tipo_lower] = {
+            "must_download": last_year_files_urls,
+            "check_download": {},
+        }
+
         ## lista dos ultiimos 12 arquivos atualizados
         last_year_month_dt = [month[-9:-3] for month in last_year_file_names]
 
@@ -99,7 +106,6 @@ def get_download_links():
 
         ## meses a serem baixados separadamente
         left_over_dates = [date for date in dates if date not in last_year_month_dt]
-
         left_over_files = []
         for left_date in left_over_dates:
             ano_plus = str(int(left_date[:4]) + 1)
@@ -119,6 +125,8 @@ def get_download_links():
             file_url = left_files_url + file_name
             left_over_files.append(file_url)
 
-        download_dict[tipo] = left_over_files + last_year_files_urls
+            download_dict[tipo_lower]["check_download"][left_date] = file_url
+
+        left_over_files
 
     return download_dict
