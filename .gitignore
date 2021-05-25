@@ -4085,3 +4085,7 @@ notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
 notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
 notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
 notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
+data/analise/mais/alziras/input/bens_candidato.parquet
+data/analise/mais/alziras/input/candidatos.parquet
+data/analise/mais/alziras/input/receita_candidatos.parquet
+notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
