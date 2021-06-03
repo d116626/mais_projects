@@ -4,6 +4,7 @@ import shutil
 import urllib.request as request
 from contextlib import closing
 
+import unidecode
 import re
 
 import time
@@ -52,14 +53,13 @@ def get_urls(download_url):
 
 def get_download_links():
     download_url = "ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED/"
-    tipos = get_urls(download_url)
-    tipos = [tipo for tipo in tipos if ".pdf" not in tipo]
+    tipos = [tipo for tipo in get_urls(download_url) if ".pdf" not in tipo]
 
     download_dict = {}
 
     for tipo in tipos:
-        print(tipo)
-        tipo_lower = tipo.lower()
+        tipo_lower = unidecode.unidecode(tipo).lower()
+        print(tipo_lower)
         year_url = download_url + tipo + "/"
         years = get_urls(year_url)
         ## adiciona 2020 hard coded caso n exista. problema no ftp dos microdados
@@ -90,7 +90,7 @@ def get_download_links():
             "check_download": {},
         }
 
-        ## lista dos ultiimos 12 arquivos atualizados
+        ## lista dos ultimos 12 arquivos atualizados
         last_year_month_dt = [month[-9:-3] for month in last_year_file_names]
 
         ## define ultimo mes para criar uma lista de datas, adiciona mais 1 para incluir o mes vigente
@@ -99,10 +99,12 @@ def get_download_links():
             f"0{last_month_dt}" if last_month_dt <= 9 else str(last_month_dt)
         )
 
-        dates = pd.date_range(
-            f"{first_year}-01-01", f"{last_year}-{last_month_dt}-01", freq="m"
-        )
-        dates = [str(date)[:7].replace("-", "") for date in dates]
+        dates = [
+            str(date)[:7].replace("-", "")
+            for date in pd.date_range(
+                f"{first_year}-01-01", f"{last_year}-{last_month_dt}-01", freq="m"
+            )
+        ]
 
         ## meses a serem baixados separadamente
         left_over_dates = [date for date in dates if date not in last_year_month_dt]
@@ -112,7 +114,7 @@ def get_download_links():
             mes_number = left_date[4:]
             mes_name = month_number_dict[mes_number]
 
-            ## cria url para baixar o arquivo maiis atualizado
+            ## cria url para baixar o arquivo mais atualizado
             left_files_url = year_url + f"{ano_plus}/{mes_name}/"
 
             ## encontra o nome do arquivo mais atualizado
