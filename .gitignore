@@ -4201,3 +4201,10 @@ data/analise/mais/alziras/input/receita_candidatos.parquet
 data/analise/mais/alziras/output/vereadores_completo.csv
 data/analise/mais/alziras/output/vereadores_completo_entrega.csv
 notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
+data/analise/mais/alziras/input/bens_candidato.parquet
+data/analise/mais/alziras/input/candidatos.parquet
+data/analise/mais/alziras/input/despesa_candidatos.parquet
+data/analise/mais/alziras/input/receita_candidatos.parquet
+data/analise/mais/alziras/output/vereadores_completo.csv
+data/analise/mais/alziras/output/vereadores_completo_entrega.csv
+notebooks/inep/Segregation/shapefiles/new-york_new-york_osm_roads.dbf
