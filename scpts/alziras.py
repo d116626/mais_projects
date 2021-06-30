@@ -129,6 +129,21 @@ def get_final_table(cadidato_resultado, candidatos, municipios, pib_municipios):
     return final_table
 
 
+def get_values(escolas, total_rede, col):
+    group_cols_0 = ["mesorregiao", "rede"]
+    value = (
+        escolas.groupby(by=group_cols_0 + [col], as_index=False).sum().drop("ano", 1)
+    )
+    dd = value.merge(total_rede, on=group_cols_0, how="outer")
+    dd[f"{col}_percent"] = round(100 * dd["count"] / dd["total"], 2)
+    dd = dd.drop(["count", "total"], 1)
+    aa.merge(
+        all_options.rename(columns={"option": "agua_potavel"}),
+        on=["mesorregiao", "rede", "agua_potavel"],
+        how="outer",
+    )
+
+
 def group_dfs(df, g_cols, select_cols, atributo):
     list_products = []
     for col in g_cols + atributo:
