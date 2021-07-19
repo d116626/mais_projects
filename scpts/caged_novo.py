@@ -49,6 +49,7 @@ def get_urls(download_url):
     with request.urlopen(download_url) as r:
         data = r.read()
     return [line.split(" ")[-1] for line in data.decode("latin1").splitlines()]
+    # return data
 
 
 def get_download_links():
