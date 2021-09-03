@@ -170,3 +170,17 @@ def download_data(save_path, download_url):
     if not os.path.isfile(save_path + file_name):
         with open(save_path + file_name, "wb") as f:
             ftp.retrbinary("RETR " + file_name, f.write)
+
+
+RAW_PATH = "../data/caged_novo/raw/"
+creat_path_tree(RAW_PATH)
+for tipo in download_dict.keys():
+    download_opt = download_dict[tipo]["check_download"]
+    download_opt.update(download_dict[tipo]["must_download"])
+    # TODO: etapa de filtragem do que n deve ser baixado
+
+    for year_month_path in list(download_opt.keys()):
+        print(tipo, year_month_path)
+        save_path = RAW_PATH + f"{tipo}/" + year_month_path
+        download_data(save_path, download_opt[year_month_path])
+    print("\n")
