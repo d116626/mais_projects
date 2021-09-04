@@ -6,9 +6,12 @@ from ftplib import FTP
 import unidecode
 import re
 import pandas as pd
+import numpy as np
 
 import shutil
 from contextlib import closing
+import basedosdados as bd
+import py7zr
 
 today = datetime.strftime(datetime.today(), "%Y-%m-%d")
 
@@ -152,14 +155,6 @@ def get_download_links():
 ################################################################
 
 
-def creat_path_tree(path):
-    current_path = ""
-    for folder in path.split("/"):
-        current_path += f"{folder}/"
-        if folder != ".." and not os.path.isdir(current_path):
-            os.mkdir(current_path)
-
-
 def download_data(save_path, download_url):
     ## download do arquivo
     path_url = "/".join(download_url.split("/")[:-1])
@@ -172,15 +167,151 @@ def download_data(save_path, download_url):
             ftp.retrbinary("RETR " + file_name, f.write)
 
 
-RAW_PATH = "../data/caged_novo/raw/"
-creat_path_tree(RAW_PATH)
-for tipo in download_dict.keys():
-    download_opt = download_dict[tipo]["check_download"]
-    download_opt.update(download_dict[tipo]["must_download"])
-    # TODO: etapa de filtragem do que n deve ser baixado
+################################################################
+# FILES AND FOLDES MANIPULATION
+################################################################
+def creat_path_tree(path):
+    current_path = ""
+    for folder in path.split("/"):
+        current_path += f"{folder}/"
+        if folder != ".." and not os.path.isdir(current_path):
+            os.mkdir(current_path)
 
-    for year_month_path in list(download_opt.keys()):
-        print(tipo, year_month_path)
-        save_path = RAW_PATH + f"{tipo}/" + year_month_path
-        download_data(save_path, download_opt[year_month_path])
-    print("\n")
+
+def extract_file(file_path, file_name, save_rows=10):
+    if not os.path.exists(f"{file_path}{file_name}.csv"):
+        archive = py7zr.SevenZipFile(f"{file_path}{file_name}.7z", mode="r").extractall(
+            path=file_path
+        )
+        filename_txt = [
+            file for file in os.listdir(file_path) if ".txt" in file.lower()
+        ][0]
+
+        #         print(filename_txt)
+
+        df = pd.read_csv(
+            f"{file_path}{filename_txt}",
+            sep=";",
+            encoding="latin-1",
+            nrows=save_rows,
+            dtype="str",
+        )
+
+        #         df.columns = manipulation.normalize_cols(df.columns)
+
+        df.to_csv(f"{file_path}{file_name}.csv", index=False, encoding="latin-1")
+
+        os.remove(f"{file_path}{filename_txt}")
+
+
+def creat_partition(df, save_clean_path, year_month_path):
+    valid_ufs = [uf for uf in df["sigla_uf"].unique() if uf is not np.nan]
+    for uf in valid_ufs:
+        ano = year_month_path.split("/")[0]
+        mes = year_month_path.split("/")[1]
+        save_path = (
+            save_clean_path
+            + f"ano={int(ano)}/"
+            + f"mes={int(mes)}/"
+            + f"sigla_uf={uf}/"
+        )
+
+        creat_path_tree(save_path)
+
+        mask = df["sigla_uf"] == uf
+        dd = df[mask].drop(columns=["sigla_uf"])
+        dd.to_csv(save_path + "data.csv", index=False)
+
+
+def clean_csvs(file_path, file_name):
+    try:
+        os.remove(f"{file_path}{file_name}.csv")
+    except:
+        pass
+
+
+################################################################
+# TABLE MANIPULATION
+################################################################
+
+
+def rename_add_orginaze_columns(file_path, file_name, tipo):
+    municipios = pd.read_csv("../data/caged_novo/diretorio_municipios.csv", dtype="str")
+    df = pd.read_csv(f"{file_path}{file_name}.csv", dtype="str")
+
+    colunas_estabelecimento = {
+        "sigla_uf": "sigla_uf",
+        "id_municipio": "id_municipio",
+        "município": "id_municipio_6",
+        "seção": "cnae_2",
+        "subclasse": "cnae_2_subclasse",
+        "admitidos": "admitidos",
+        "desligados": "desligados",
+        "fonte_desl": "fonte_desligamento",
+        "saldomovimentação": "saldo_movimentacao",
+        "tipoempregador": "tipo_empregador",
+        "tipoestabelecimento": "tipo_estabelecimento",
+        "tamestabjan": "tamanho_estabelecimento_janeiro",
+        "competência": "",
+        "região": "",
+        "uf": "",
+    }
+
+    colunas_movimentacoes = {
+        "sigla_uf": "sigla_uf",
+        "id_municipo": "id_municipio",
+        "município": "id_municipio_6",
+        "seção": "cnae_2",
+        "subclasse": "cnae_2_subclasse",
+        "cbo2002ocupação": "cbo_2002",
+        "saldomovimentação": "saldo_movimentacao",
+        "categoria": "categoria",
+        "graudeinstrução": "grau_instrucao",
+        "idade": "idade",
+        "horascontratuais": "horas_contratuais",
+        "raçacor": "raca_cor",
+        "sexo": "sexo",
+        "tipoempregador": "tipo_empregador",
+        "tipoestabelecimento": "tipo_estabelecimento",
+        "tipomovimentação": "tipo_movimentacao",
+        "tipodedeficiência": "tipo_deficiencia",
+        "indtrabintermitente": "indicador_trabalho_intermitente",
+        "indtrabparcial": "indicador_trabalho_parcial",
+        "salário": "salario_mensal",
+        "tamestabjan": "tamanho_estabelecimento_janeiro",
+        "indicadoraprendiz": "indicador_aprendiz",
+        "fonte": "fonte",
+        "competência": "",
+        "região": "",
+        "uf": "",
+    }
+
+    if tipo == "estabelecimentos":
+        col_dict = colunas_estabelecimento
+    else:
+        col_dict = colunas_movimentacoes
+
+    remove_cols = [col for col in col_dict if col_dict.get(col) == ""]
+
+    df = df.drop(columns=remove_cols)
+    df = df.rename(columns=col_dict)
+    df = df.merge(municipios, on="id_municipio_6", how="left")
+
+    col_order = [col_dict[col] for col in col_dict if col not in remove_cols]
+    df = df[col_order]
+
+    return df
+
+
+################################################################
+# UPLOAD TO BD
+################################################################
+
+
+def upload_to_bd(tipo, filepath):
+    if tipo == "estabelecimentos":
+        tb = bd.Table("microdados_estabelecimentos", "br_me_caged")
+    else:
+        tb = bd.Table("microdados_movimentacoes", "br_me_caged")
+
+    tb.append(filepath, if_exists="replace")
