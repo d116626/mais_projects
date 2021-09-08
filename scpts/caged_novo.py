@@ -239,12 +239,15 @@ def rename_add_orginaze_columns(file_path, file_name, tipo):
     municipios = pd.read_csv("../data/caged_novo/diretorio_municipios.csv", dtype="str")
     df = pd.read_csv(f"{file_path}{file_name}.csv", dtype="str")
 
+    df["cnae_2"] = df["subclasse"].str[:5]
+
     colunas_estabelecimento = {
         "sigla_uf": "sigla_uf",
         "id_municipio": "id_municipio",
         "município": "id_municipio_6",
-        "seção": "cnae_2",
+        "cnae_2": "cnae_2",
         "subclasse": "cnae_2_subclasse",
+        "seção": "cnae_2_secao",
         "admitidos": "admitidos",
         "desligados": "desligados",
         "fonte_desl": "fonte_desligamento",
@@ -261,8 +264,9 @@ def rename_add_orginaze_columns(file_path, file_name, tipo):
         "sigla_uf": "sigla_uf",
         "id_municipo": "id_municipio",
         "município": "id_municipio_6",
-        "seção": "cnae_2",
+        "cnae_2": "cnae_2",
         "subclasse": "cnae_2_subclasse",
+        "seção": "cnae_2_secao",
         "cbo2002ocupação": "cbo_2002",
         "saldomovimentação": "saldo_movimentacao",
         "categoria": "categoria",
