@@ -239,8 +239,6 @@ def rename_add_orginaze_columns(file_path, file_name, tipo):
     municipios = pd.read_csv("../data/caged_novo/diretorio_municipios.csv", dtype="str")
     df = pd.read_csv(f"{file_path}{file_name}.csv", dtype="str")
 
-    df["cnae_2"] = df["subclasse"].str[:5]
-
     colunas_estabelecimento = {
         "sigla_uf": "sigla_uf",
         "id_municipio": "id_municipio",
@@ -289,11 +287,16 @@ def rename_add_orginaze_columns(file_path, file_name, tipo):
         "região": "",
         "uf": "",
     }
-
     if tipo == "estabelecimentos":
         col_dict = colunas_estabelecimento
     else:
         col_dict = colunas_movimentacoes
+        df["cbo2002ocupação"] = df["cbo2002ocupação"].apply(
+            lambda x: (6 - len(x)) * "0" + x
+        )
+
+    df["subclasse"] = df["subclasse"].apply(lambda x: (7 - len(x)) * "0" + x)
+    df["cnae_2"] = df["subclasse"].str[:5]
 
     remove_cols = [col for col in col_dict if col_dict.get(col) == ""]
 
