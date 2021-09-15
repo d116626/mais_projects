@@ -1,17 +1,14 @@
-import time
-from datetime import datetime
 import os
-from ftplib import FTP
-
-import unidecode
 import re
-import pandas as pd
-import numpy as np
+import unidecode
+from ftplib import FTP
+from datetime import datetime
 
-import shutil
-from contextlib import closing
-import basedosdados as bd
 import py7zr
+import shutil
+import numpy as np
+import pandas as pd
+import basedosdados as bd
 
 today = datetime.strftime(datetime.today(), "%Y-%m-%d")
 
@@ -154,7 +151,7 @@ def get_download_links():
 
 
 ## get the blobs from basedosdados storage and filter what needs to be downloaded
-def get_blobs(tipo, download_dict, bucket_name="basedosdados"):
+def get_filtered_download_dict(tipo, download_dict, bucket_name="basedosdados"):
     def get_year_month(b):
         ano = b.split("ano=")[1].split("/")[0]
         mes = b.split("mes=")[1].split("/")[0]
@@ -307,8 +304,8 @@ def clean_csvs(file_path, file_name):
 ################################################################
 
 
-def rename_add_orginaze_columns(file_path, file_name, tipo):
-    municipios = pd.read_csv("../data/caged_novo/diretorio_municipios.csv", dtype="str")
+def rename_add_orginaze_columns(file_path, file_name, tipo, municipios):
+
     df = pd.read_csv(f"{file_path}{file_name}.csv", dtype="str")
 
     colunas_estabelecimento = {
@@ -396,6 +393,21 @@ def upload_to_bd(tipo, filepath):
     tb.append(filepath, if_exists="replace")
 
 
+################################################################
+# GET MUNICIPIOS FROM BD
+################################################################
+print("Getting municipios from bd")
+query = """
+SELECT 
+    sigla_uf,
+    id_municipio,
+    id_municipio_6
+FROM `basedosdados.br_bd_diretorios_brasil.municipio` 
+"""
+
+municipios = bd.read_sql(query, billing_project_id="basedosdados-dev")
+print("\n")
+
 if __name__ == "__main__":
     # deleta pasta
     if os.path.isdir(CLEAN_PATH):
@@ -409,7 +421,7 @@ if __name__ == "__main__":
 
     for tipo in list(download_dict.keys()):
 
-        download_opt = get_blobs(
+        download_opt = get_filtered_download_dict(
             tipo=tipo, download_dict=download_dict, bucket_name="basedosdados-dev"
         )
 
@@ -432,7 +444,7 @@ if __name__ == "__main__":
                 extract_file(file_path, file_name, save_rows=None)
 
                 # load e organiza os dados
-                df = rename_add_orginaze_columns(file_path, file_name, tipo)
+                df = rename_add_orginaze_columns(file_path, file_name, tipo, municipios)
 
                 # salva no formato de particao
                 save_clean_path = CLEAN_PATH + f"{tipo}/"

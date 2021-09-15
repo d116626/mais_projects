@@ -1,4 +1,5 @@
 data
+.caged_novo
 __pycache__
 .ipynb_checkpoints
 *.pyc
