@@ -15,6 +15,11 @@ import py7zr
 
 today = datetime.strftime(datetime.today(), "%Y-%m-%d")
 
+
+RAW_PATH = "../data/caged_novo/raw/"
+CLEAN_PATH = "../data/caged_novo/clean/"
+
+
 month_number_dict = {
     "04": "Abril",
     "08": "Agosto",
@@ -145,9 +150,76 @@ def get_download_links():
             left_path = f"{int(left_date_year)}/" + f"{int(left_date_month)}/"
             download_dict[tipo_lower]["check_download"][left_path] = file_url
 
-        left_over_files
+    return download_dict
+
+
+## get the blobs from basedosdados storage and filter what needs to be downloaded
+def get_blobs(tipo, download_dict, bucket_name="basedosdados"):
+    def get_year_month(b):
+        ano = b.split("ano=")[1].split("/")[0]
+        mes = b.split("mes=")[1].split("/")[0]
+        return f"{ano}/{mes}/"
+
+    tb = bd.Table(dataset_id="br_me_caged", table_id=f"microdados_{tipo}")
+    blobs = list(
+        tb.client["storage_staging"]
+        .bucket(bucket_name)
+        .list_blobs(prefix=f"staging/{tb.dataset_id}/{tb.table_id}/")
+    )
+
+    blobs = list(set([get_year_month(b.name) for b in blobs]))
+
+    check_download_pop = [
+        d for d in download_dict[tipo]["check_download"] if d in blobs
+    ]
+
+    [
+        download_dict[tipo]["check_download"].pop(year_month, None)
+        for year_month in check_download_pop
+    ]
+
+    must_download_pop = [
+        d for d in download_dict[tipo]["must_download"] if d not in blobs
+    ]
+    if must_download_pop != []:
+        pass
+    else:
+        download_dict[tipo]["must_download"] = {}
 
     return download_dict
+
+
+## logic to trigger the downloads
+def get_trigger_and_download_opt(download_opt, tipo):
+    # TODO: etapa de filtragem do que n deve ser baixado
+    if (
+        download_opt[tipo]["check_download"] == {}
+        and download_opt[tipo]["must_download"] == {}
+    ):
+        print("nothing to download")
+        download_links = {}
+        trigger = False
+    elif (
+        download_opt[tipo]["check_download"] == {}
+        and download_opt[tipo]["must_download"] != {}
+    ):
+        print("Downloading last 12 months")
+        trigger = True
+        download_links = download_opt[tipo]["must_download"]
+    elif (
+        download_opt[tipo]["check_download"] != {}
+        and download_opt[tipo]["must_download"] == {}
+    ):
+        print("Downloading missing file")
+        trigger = True
+        download_links = download_opt[tipo]["check_download"]
+    else:
+        print("Downloading files")
+        trigger = True
+        download_links = download_opt[tipo]["check_download"]
+        download_links.update(download_opt[tipo]["must_download"])
+
+    return trigger, download_links
 
 
 ################################################################
@@ -317,8 +389,60 @@ def rename_add_orginaze_columns(file_path, file_name, tipo):
 
 def upload_to_bd(tipo, filepath):
     if tipo == "estabelecimentos":
-        tb = bd.Table("microdados_estabelecimentos", "br_me_caged")
+        tb = bd.Table(table_id="microdados_estabelecimentos", dataset_id="br_me_caged")
     else:
-        tb = bd.Table("microdados_movimentacoes", "br_me_caged")
+        tb = bd.Table(table_id="microdados_movimentacoes", dataset_id="br_me_caged")
 
     tb.append(filepath, if_exists="replace")
+
+
+if __name__ == "__main__":
+    # deleta pasta
+    if os.path.isdir(CLEAN_PATH):
+        shutil.rmtree(CLEAN_PATH)
+    if os.path.isdir(RAW_PATH):
+        shutil.rmtree(RAW_PATH)
+
+    print("Get download links")
+    download_dict = get_download_links()
+    print("\n")
+
+    for tipo in list(download_dict.keys()):
+
+        download_opt = get_blobs(
+            tipo=tipo, download_dict=download_dict, bucket_name="basedosdados-dev"
+        )
+
+        print(f"Filter download links {tipo}")
+
+        trigger, download_opt = get_trigger_and_download_opt(download_opt, tipo)
+
+        if trigger:
+            for year_month_path in list(download_opt.keys()):
+                print(tipo, ": ", year_month_path)
+                ## download data
+                save_path = RAW_PATH + f"{tipo}/" + year_month_path
+                download_data(save_path, download_opt[year_month_path])
+
+                # create some vars
+                file_name = download_opt[year_month_path].split("/")[-1].split(".")[0]
+                file_path = RAW_PATH + f"{tipo}/" + year_month_path
+
+                # extrai arquivo
+                extract_file(file_path, file_name, save_rows=None)
+
+                # load e organiza os dados
+                df = rename_add_orginaze_columns(file_path, file_name, tipo)
+
+                # salva no formato de particao
+                save_clean_path = CLEAN_PATH + f"{tipo}/"
+                creat_partition(df, save_clean_path, year_month_path)
+
+                # upload basedosdados
+                upload_to_bd(tipo, save_clean_path)
+
+                # deleta pasta
+                shutil.rmtree(CLEAN_PATH + f"{tipo}/")
+                shutil.rmtree(RAW_PATH + f"{tipo}/")
+
+        print("\n")
