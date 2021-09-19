@@ -395,22 +395,20 @@ def upload_to_bd(tipo, filepath):
     tb.append(filepath, if_exists="replace")
 
 
-################################################################
-# GET MUNICIPIOS FROM BD
-################################################################
-print("====== ", today, " ======")
-query = """
-SELECT 
-    sigla_uf,
-    id_municipio,
-    id_municipio_6
-FROM `basedosdados.br_bd_diretorios_brasil.municipio` 
-"""
-
-municipios = bd.read_sql(query, billing_project_id="basedosdados-dev")
-print("\n")
-
 if __name__ == "__main__":
+    # GET MUNICIPIOS FROM BD
+    print("====== ", today, " ======")
+    query = """
+    SELECT 
+        sigla_uf,
+        id_municipio,
+        id_municipio_6
+    FROM `basedosdados.br_bd_diretorios_brasil.municipio` 
+    """
+
+    municipios = bd.read_sql(query, billing_project_id="basedosdados-dev")
+    print("\n")
+
     # deleta pasta
     if os.path.isdir(CLEAN_PATH):
         shutil.rmtree(CLEAN_PATH)
