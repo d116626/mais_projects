@@ -222,8 +222,17 @@ def get_trigger_and_download_opt(download_opt, tipo):
 
 
 ################################################################
-# DOWNLOAD FILES
+# DOWNLOAD/UPLOAD FILES
 ################################################################
+def upload_to_raw(tipo, save_raw_path):
+    if tipo == "estabelecimentos":
+        st = bd.Storage(
+            table_id="microdados_estabelecimentos", dataset_id="br_me_caged"
+        )
+    else:
+        st = bd.Storage(table_id="microdados_movimentacoes", dataset_id="br_me_caged")
+
+    st.upload(path=save_raw_path, mode="raw", if_exists="replace")
 
 
 def download_data(save_path, download_url):
@@ -439,6 +448,9 @@ if __name__ == "__main__":
                 # create some vars
                 file_name = download_opt[year_month_path].split("/")[-1].split(".")[0]
                 file_path = RAW_PATH + f"{tipo}/" + year_month_path
+
+                # upload raw data to storage
+                upload_to_raw(tipo=tipo, save_raw_path=f"{save_path}{file_name}.7z")
 
                 # extrai arquivo
                 extract_file(file_path, file_name, save_rows=None)
