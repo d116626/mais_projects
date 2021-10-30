@@ -221,6 +221,17 @@ def get_trigger_and_download_opt(download_opt, tipo):
     return trigger, download_links
 
 
+file_url = "AC_20171016.zip"
+
+# download_url(BASE_URL + file_url,RAW_DOWNLOAD_PATH + file_url)
+
+
+soup = BeautifulSoup(requests.get(BASE_URL).content, "html.parser")
+files_links = [
+    zip_file["href"]
+    for zip_file in soup.find_all("a", href=True)
+    if ".zip" in zip_file["href"] and "Documentacao" not in zip_file["href"]
+]
 ################################################################
 # DOWNLOAD FILES
 ################################################################
