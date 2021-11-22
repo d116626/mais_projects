@@ -5088,3 +5088,12 @@ data/analise/mais/alziras/input/receita_candidatos.parquet
 data/analise/mais/alziras/output/vereadores_completo.csv
 data/caged_novo/clean/movimentacoes/ano=2020/mes=1/sigla_uf=SP/data.csv
 data/caged_novo/raw/movimentacoes/2020/1/CAGEDMOV202001.csv
+data/analise/mais/alziras/Untitled Folder/vereadores_completo_entrega.csv
+data/analise/mais/alziras/Untitled Folder/vereadores_completo.csv
+data/analise/mais/alziras/input/despesa_candidatos.parquet
+data/analise/mais/alziras/input/candidatos.parquet
+data/analise/mais/alziras/input/bens_candidato.parquet
+data/analise/mais/alziras/input/receita_candidatos.parquet
+data/analise/mais/alziras/output/vereadores_completo.csv
+data/caged_novo/clean/movimentacoes/ano=2020/mes=1/sigla_uf=SP/data.csv
+data/caged_novo/raw/movimentacoes/2020/1/CAGEDMOV202001.csv
